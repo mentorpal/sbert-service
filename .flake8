@@ -1,0 +1,14 @@
+[flake8]
+ignore = E501,W503
+max-line-length = 100
+max-complexity = 18
+exclude =
+    __pycache__,
+    .cache,
+    .git,
+    .github,
+    .pytest_cache,
+    .venv,
+    .vscode,
+    build,
+    shared

@@ -1,0 +1,10 @@
+.github
+.mypy_cache
+.venv
+.vscode
+.cov*
+.pytest_cache
+htmlcov
+tests
+shared
+.env*

@@ -1,0 +1,25 @@
+[tool.poetry]
+name = "sbert-service"
+version = "0.1.0"
+description = "SBert as a service"
+authors = ["Milan Simonovic <mbsimonovic@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+gunicorn = "^20.1.0"
+Flask = "^2.0.3"
+Flask-Cors = "^3.0.10"
+licenseheaders = {git = "https://github.com/kycarr/licenseheaders.git"}
+joblib = "^1.1.0"
+sentence-transformers = "^2.2.0"
+
+[tool.poetry.dev-dependencies]
+
+black = "^22.1.0"
+flake8 = "^4.0.1"
+mypy = "^0.931"
+pep8-naming = "^0.12.1"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
