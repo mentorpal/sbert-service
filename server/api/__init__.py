@@ -10,6 +10,7 @@ from flask_cors import CORS  # NOQA
 from api.blueprints.encode import encode_blueprint
 from api.blueprints.ping import ping_blueprint
 
+
 def create_app():
     dictConfig(
         {
@@ -31,7 +32,7 @@ def create_app():
     )
     app = Flask(__name__)
     CORS(app)
-    
+
     app.register_blueprint(ping_blueprint, url_prefix="/v1/ping")
     app.register_blueprint(encode_blueprint, url_prefix="/v1/encode")
 

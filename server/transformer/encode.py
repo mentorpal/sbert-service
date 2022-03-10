@@ -11,29 +11,25 @@ from .embeddings import TransformerEmbeddings, load_transformer
 from torch import Tensor
 from numpy import ndarray
 
-logging.info('encoder init')
+logging.info("encoder init")
 
-class TransformersEncoder():
+
+class TransformersEncoder:
     transformer: TransformerEmbeddings  # shared
 
     def __init__(self, shared_root: str):
         self.transformer = self.__load_transformer(shared_root)
 
     def __load_transformer(self, shared_root):
-        if (
-            getattr(TransformersEncoder, "transformer", None)
-            is None
-        ):
+        if getattr(TransformersEncoder, "transformer", None) is None:
             # class variable, load just once
             logging.info(f"loading transformers from {shared_root}")
-            transformer = load_transformer(shared_root)            
-            setattr(
-                TransformersEncoder, "transformer", transformer
-            )
+            transformer = load_transformer(shared_root)
+            setattr(TransformersEncoder, "transformer", transformer)
         return TransformersEncoder.transformer
 
     def encode(self, question: str) -> Union[List[Tensor], ndarray, Tensor]:
         logging.info(question)
-        sanitized_question = sanitize_string(question)
+        # sanitized_question = sanitize_string(question)
         embedded_question = self.transformer.get_embeddings(question)
         return embedded_question.tolist()

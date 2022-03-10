@@ -43,8 +43,9 @@ class TransformerEmbeddings:
         )
 
     def get_embeddings(self, data: Union[str, List[str]]):
-        embeddings = self.transformer.encode(data, show_progress_bar=True)
+        embeddings = self.transformer.encode(data)
         return embeddings
+
 
 def _generate(dst_folder):
     pkl = path.join(dst_folder, "transformer.pkl")
@@ -53,14 +54,15 @@ def _generate(dst_folder):
     else:
         print(f"generating {pkl}")
         transformer = TransformerEmbeddings(dst_folder)
-        with open (pkl, 'wb') as f:
+        with open(pkl, "wb") as f:
             pickle.dump(transformer, f)
         print(f"{pkl} created")
 
 
 def load_transformer(dst_folder):
     logging.info("unpickling transformers")
-    return CustomUnpickler(open(path.join(dst_folder, "transformer.pkl"), 'rb')).load()        
+    return CustomUnpickler(open(path.join(dst_folder, "transformer.pkl"), "rb")).load()
+
 
 if __name__ == "__main__":
     _generate(sys.argv[-1])

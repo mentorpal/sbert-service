@@ -7,6 +7,7 @@
 from typing import Dict, List
 from typing import Dict
 
+
 def extract_alphanumeric(input_string: str) -> str:
     from string import ascii_letters, digits, whitespace
 
