@@ -43,7 +43,7 @@ class TransformerEmbeddings:
         )
 
     def get_embeddings(self, data: Union[str, List[str]]):
-        embeddings = self.transformer.encode(data)
+        embeddings = self.transformer.encode(data, show_progress_bar=False)
         return embeddings
 
 

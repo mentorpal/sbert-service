@@ -5,8 +5,8 @@
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
 import logging
-from .utils import sanitize_string
 from typing import Union, Tuple, List
+from .utils import sanitize_string
 from .embeddings import TransformerEmbeddings, load_transformer
 from torch import Tensor
 from numpy import ndarray

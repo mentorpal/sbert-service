@@ -4,16 +4,18 @@
 #
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
-import os
 
-from flask import Blueprint, jsonify
+# @pytest.fixture(autouse=True)
+# def python_path_env(monkeypatch, shared_root):
+#     monkeypatch.setenv("SHARED_ROOT", shared_root)
 
-ping_blueprint = Blueprint("ping", __name__)
 
+def test_returns_400_response_when_query_missing(client):
+    res = client.get("/v1/encode/")
+    assert res.status_code == 400
 
-@ping_blueprint.route("/", methods=["GET"])
-@ping_blueprint.route("", methods=["GET"])
-def ping():
-    return jsonify(
-        {"status": "success", "message": "pong!", "container_id": os.uname()[1]}
-    )
+def test_hello_world(client):
+    res = client.get("/v1/encode?query=hello+world")
+    assert res.status_code == 200
+    assert res.json["query"] == "hello world"
+    assert len(res.json["encoding"]) > 20

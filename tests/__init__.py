@@ -4,16 +4,3 @@
 #
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
-import os
-
-from flask import Blueprint, jsonify
-
-ping_blueprint = Blueprint("ping", __name__)
-
-
-@ping_blueprint.route("/", methods=["GET"])
-@ping_blueprint.route("", methods=["GET"])
-def ping():
-    return jsonify(
-        {"status": "success", "message": "pong!", "container_id": os.uname()[1]}
-    )

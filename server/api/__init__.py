@@ -7,8 +7,8 @@
 from logging.config import dictConfig  # NOQA
 from flask import Flask  # NOQA
 from flask_cors import CORS  # NOQA
-from api.blueprints.encode import encode_blueprint
-from api.blueprints.ping import ping_blueprint
+from .blueprints.encode import encode_blueprint
+from .blueprints.ping import ping_blueprint
 
 
 def create_app():

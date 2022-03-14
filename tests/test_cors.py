@@ -4,16 +4,19 @@
 #
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
-import os
-
-from flask import Blueprint, jsonify
-
-ping_blueprint = Blueprint("ping", __name__)
+import pytest
 
 
-@ping_blueprint.route("/", methods=["GET"])
-@ping_blueprint.route("", methods=["GET"])
-def ping():
-    return jsonify(
-        {"status": "success", "message": "pong!", "container_id": os.uname()[1]}
-    )
+@pytest.mark.parametrize(
+    "endpoint",
+    [
+        ("/v1/ping"),
+        ("/v1/ping/"),
+        ("/v1/encode"),
+        ("/v1/encode/"),
+    ],
+)
+def test_cors_preflight(endpoint, client):
+    res = client.options(endpoint, follow_redirects=False)
+    assert res.status_code == 200  # redirect would cause fail
+    assert res.headers.get("Access-Control-Allow-Origin") == "*"

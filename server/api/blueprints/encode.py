@@ -6,13 +6,14 @@
 #
 import os
 from flask import Blueprint, jsonify, request
-from transformer.encode import TransformersEncoder
+from server.transformer.encode import TransformersEncoder
 
-encode_blueprint = Blueprint("questions", __name__)
+encode_blueprint = Blueprint("encode", __name__)
 shared_root = os.environ.get("SHARED_ROOT", "shared")
 if not os.path.isdir(shared_root):
     raise Exception("Shared missing.")
 
+# load on init so request handler is fast on first hit
 encoder: TransformersEncoder = TransformersEncoder(shared_root)
 
 

@@ -14,11 +14,13 @@ joblib = "^1.1.0"
 sentence-transformers = "^2.2.0"
 
 [tool.poetry.dev-dependencies]
-
 black = "^22.1.0"
 flake8 = "^4.0.1"
 mypy = "^0.931"
 pep8-naming = "^0.12.1"
+pytest = "^7.0.1"
+pytest-flask = "^1.2.0"
+coverage = "^6.3.2"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

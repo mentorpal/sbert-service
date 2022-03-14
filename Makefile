@@ -49,18 +49,21 @@ LICENSE_HEADER:
 
 .PHONY: license
 license: LICENSE LICENSE_HEADER $(VENV)
-	poetry run python -m licenseheaders -t LICENSE_HEADER -d server/src $(args)
-	poetry run python -m licenseheaders -t LICENSE_HEADER -d server/tests $(args)
+	poetry run python -m licenseheaders -t LICENSE_HEADER -d server $(args)
+	poetry run python -m licenseheaders -t LICENSE_HEADER -d tests $(args)
 	poetry run python -m licenseheaders -t LICENSE_HEADER -d tools $(args)
-	poetry run python -m licenseheaders -t LICENSE_HEADER -d shared $(args)
 
 .PHONY: poetry-ensure-installed
 poetry-ensure-installed:
 	sh ./tools/poetry_ensure_installed.sh
 
 .PHONY: test
-test:
-	cd server && $(MAKE) test
+test: $(VENV)
+	cd ./shared/ && $(MAKE) installed/sentence-transformer
+	SHARED_ROOT=./shared/installed poetry run coverage run \
+		--omit="$(PWD)/tests $(VENV)" \
+		-m py.test -vv $(args)
+
 
 .PHONY: test-all
 test-all:
