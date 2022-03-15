@@ -10,6 +10,37 @@ install: poetry-ensure-installed
 	poetry env use python3.8
 	poetry install
 
+.PHONY docker-build:
+docker-build: transformer.pkl sentence-transformers
+# squash reduces final image size by merging layers
+	docker build --squash -t mentorpal/sbert-service:1.0.0-alpha.1 .
+
+shared/installed:
+	mkdir -p shared/installed
+
+transformer.pkl: $(VENV) shared/installed
+	poetry run python ./server/transformer/embeddings.py ./shared/installed
+
+sentence-transformers: shared/installed
+	cd shared && python sentence_transformer_download.py 
+
+build/deploy:
+	# put everything we want in our beanstalk deploy.zip file
+	# into a build/deploy folder.
+	mkdir -p build/deploy
+	cp -r ebs/bundle build/deploy/bundle
+
+deploy.zip:
+	$(MAKE) clean-deploy build/deploy
+	cd build/deploy/bundle && zip -r $(PWD)/deploy.zip .
+
+clean-deploy:
+	rm -rf build deploy.zip
+
+.PHONY clean:
+clean:
+	rm -rf .venv htmlcov .coverage build deploy.zip
+
 .PHONY: deps-show
 deps-show:
 	poetry show
@@ -21,23 +52,6 @@ deps-show-outdated:
 .PHONY: deps-update
 deps-update:
 	poetry update
-
-.PHONY clean:
-clean:
-	rm -rf .venv htmlcov .coverage
-
-.PHONY: docker-build
-docker-build:
-	cd server && $(MAKE) docker-build
-
-.PHONY: black
-black: $(VENV)
-	poetry run black .
-
-.PHONY: format
-format:
-	$(MAKE) license
-	$(MAKE) black
 
 LICENSE:
 	@echo "you must have a LICENSE file" 1>&2
@@ -64,6 +78,14 @@ test: $(VENV)
 		--omit="$(PWD)/tests $(VENV)" \
 		-m py.test -vv $(args)
 
+.PHONY: black
+black: $(VENV)
+	poetry run black .
+
+.PHONY: format
+format:
+	$(MAKE) license
+	$(MAKE) black
 
 .PHONY: test-all
 test-all:
