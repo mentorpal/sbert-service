@@ -8,7 +8,7 @@ A dockerized REST API service to encode sentences using [sentence-transformers](
  - [ ] tooling - docker, make
  - [ ] github workflow build
  - [ ] terraform code to deploy to beanstalk
- - [ ] Readme
+ - [ ] json logging
  - [ ] response caching
  - [ ] detect and use GPU if available
  

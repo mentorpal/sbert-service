@@ -1,0 +1,11 @@
+{
+  "AWSEBDockerrunVersion": 2,
+  "containerDefinitions": [
+    {
+      "name": "sbert-service",
+      "image": "mentorpal/sbert-service:1.0.0-alpha.1",
+      "essential": true,
+      "memory": 4096
+    }    
+  ]
+}
