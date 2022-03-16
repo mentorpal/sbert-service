@@ -4,13 +4,14 @@ A dockerized REST API service to encode sentences using [sentence-transformers](
 
 # TODO
 
- - [ ] scripts to download models
- - [ ] tooling - docker, make
- - [ ] github workflow build
  - [ ] terraform code to deploy to beanstalk
  - [ ] json logging
  - [ ] response caching
  - [ ] detect and use GPU if available
+ - [ ] github workflow build
+ - [x] benchmark
+ - [x] scripts to download models
+ - [x] tooling - docker, make
  
 
 ## Requirements
