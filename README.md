@@ -5,6 +5,10 @@ A dockerized REST API service to encode sentences using [sentence-transformers](
 # TODO
 
  - [ ] terraform code to deploy to beanstalk
+ - [ ] nginx ?
+ - [ ] sentry
+ - [ ] auth&authz!
+ - [ ] api quotas
  - [ ] json logging
  - [ ] response caching
  - [ ] detect and use GPU if available
