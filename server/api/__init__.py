@@ -38,6 +38,7 @@ def create_app():
     if environ.get("IS_SENTRY_ENABLED", "") == "true":
         import sentry_sdk  # NOQA E402
         from sentry_sdk.integrations.flask import FlaskIntegration  # NOQA E402
+
         logging.info("SENTRY enabled, calling init")
         sentry_sdk.init(
             dsn=environ.get("SENTRY_DSN_MENTOR_SBERT_SERVICE"),

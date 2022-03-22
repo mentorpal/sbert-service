@@ -5,11 +5,10 @@
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
 import logging
-from typing import Union, Tuple, List
-from .utils import sanitize_string
-from .embeddings import TransformerEmbeddings, load_transformer
+from typing import Union, List
 from torch import Tensor
 from numpy import ndarray
+from .embeddings import TransformerEmbeddings, load_transformer
 
 logging.info("encoder init")
 
@@ -30,6 +29,5 @@ class TransformersEncoder:
 
     def encode(self, question: str) -> Union[List[Tensor], ndarray, Tensor]:
         logging.info(question)
-        # sanitized_question = sanitize_string(question)
         embedded_question = self.transformer.get_embeddings(question)
         return embedded_question.tolist()
