@@ -54,6 +54,10 @@ def create_app():
 
     CORS(app)
 
+    @app.route("/v1/debug-sentry")
+    def _error_handler_test():
+        raise Exception("Safe to ignore, route for intentional error")
+
     app.register_blueprint(health_blueprint, url_prefix="/")
     app.register_blueprint(ping_blueprint, url_prefix="/v1/ping")
     app.register_blueprint(encode_blueprint, url_prefix="/v1/encode")
