@@ -4,7 +4,6 @@ A dockerized REST API service to encode sentences using [sentence-transformers](
 
 # TODO
 
- - [ ] sentry
  - [ ] auth&authz!
  - [ ] measure response time
  - [ ] json logging
@@ -12,6 +11,7 @@ A dockerized REST API service to encode sentences using [sentence-transformers](
  - [ ] github workflow build
  - [ ] WONT DO: detect and use GPU if available
  - [ ] WONT DO: nginx (beanstalk has a built-in one)
+ - [x] sentry
  - [x] terraform code to deploy to beanstalk
  - [x] benchmark
  - [x] scripts to download models

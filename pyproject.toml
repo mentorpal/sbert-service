@@ -12,6 +12,7 @@ Flask-Cors = "^3.0.10"
 licenseheaders = {git = "https://github.com/kycarr/licenseheaders.git"}
 joblib = "^1.1.0"
 sentence-transformers = "^2.2.0"
+sentry-sdk = {extras = ["flask"], version = "^1.5.8"}
 
 [tool.poetry.dev-dependencies]
 black = "^22.1.0"
