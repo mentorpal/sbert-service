@@ -9,6 +9,7 @@ from flask import Flask  # NOQA
 from flask_cors import CORS  # NOQA
 from .blueprints.encode import encode_blueprint
 from .blueprints.ping import ping_blueprint
+from .blueprints.health import health_blueprint
 
 
 def create_app():
@@ -33,6 +34,7 @@ def create_app():
     app = Flask(__name__)
     CORS(app)
 
+    app.register_blueprint(health_blueprint, url_prefix="/")
     app.register_blueprint(ping_blueprint, url_prefix="/v1/ping")
     app.register_blueprint(encode_blueprint, url_prefix="/v1/encode")
 
