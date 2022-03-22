@@ -8,9 +8,10 @@ A dockerized REST API service to encode sentences using [sentence-transformers](
  - [ ] measure response time
  - [ ] json logging
  - [ ] response caching (perhaps with nginx?)
- - [ ] github workflow build
+ - [ ] cicd pipeline
  - [ ] WONT DO: detect and use GPU if available
  - [ ] WONT DO: nginx (beanstalk has a built-in one)
+ - [x] error handlers
  - [x] sentry
  - [x] terraform code to deploy to beanstalk
  - [x] benchmark
