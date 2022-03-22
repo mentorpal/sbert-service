@@ -5,7 +5,13 @@
       "name": "sbert-service",
       "image": "mentorpal/sbert-service:1.0.0-alpha.1",
       "essential": true,
-      "memory": 4096
+      "memory": 3600,
+      "portMappings": [
+        {
+          "hostPort": 80,
+          "containerPort": 5000
+        }
+      ]
     }    
   ]
 }
