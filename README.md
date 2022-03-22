@@ -4,15 +4,15 @@ A dockerized REST API service to encode sentences using [sentence-transformers](
 
 # TODO
 
- - [ ] terraform code to deploy to beanstalk
- - [ ] nginx ?
  - [ ] sentry
  - [ ] auth&authz!
- - [ ] api quotas
+ - [ ] measure response time
  - [ ] json logging
- - [ ] response caching
- - [ ] detect and use GPU if available
+ - [ ] response caching (perhaps with nginx?)
  - [ ] github workflow build
+ - [ ] WONT DO: detect and use GPU if available
+ - [ ] WONT DO: nginx (beanstalk has a built-in one)
+ - [x] terraform code to deploy to beanstalk
  - [x] benchmark
  - [x] scripts to download models
  - [x] tooling - docker, make
@@ -70,3 +70,7 @@ To add license headers:
 ```
 make license
 ```
+
+# Resources
+
+ - https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/create_deploy_docker_v2config.html
