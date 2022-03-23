@@ -10,6 +10,7 @@ locals {
   aws_region               = local.region_vars.locals.aws_region
   cloudwatch_slack_webhook = local.secret_vars.locals.cloudwatch_slack_webhook
   sentry_dsn_sbert         = local.secret_vars.locals.sentry_dsn_sbert
+  api_secret_key           = local.secret_vars.locals.api_secret_key
 }
 
 terraform {
@@ -39,8 +40,9 @@ inputs = {
   cloudwatch_slack_webhook   = local.cloudwatch_slack_webhook
 
   # scaling:
-  eb_env_autoscale_min             = 1 # ~50req/sec with c6i.large
-  eb_env_autoscale_max             = 3
+  eb_env_autoscale_min             = 1 # ~23req/sec with c6i.large
+  eb_env_autoscale_max             = 2 # ~50req/sec with c6i.large
+  # seems like there's no way to set desired capacity and it seems to be max by default?
   eb_env_autoscale_measure_name    = "CPUUtilization"
   eb_env_autoscale_statistic       = "Average"
   eb_env_autoscale_unit            = "Percent"
@@ -54,6 +56,7 @@ inputs = {
     IS_SENTRY_ENABLED               = "true",
     SENTRY_DSN_MENTOR_SBERT_SERVICE = local.sentry_dsn_sbert,
     LOG_LEVEL_SBERT_SERVICE         = "DEBUG",
+    API_SECRET_KEY                  = local.api_secret_key
   }
 
   # logging:
