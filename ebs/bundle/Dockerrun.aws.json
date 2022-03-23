@@ -3,7 +3,7 @@
   "containerDefinitions": [
     {
       "name": "sbert-service",
-      "image": "mentorpal/sbert-service:1.0.0-alpha.1",
+      "image": "mentorpal/sbert-service:1.0.0-alpha.2",
       "essential": true,
       "memory": 3600,
       "portMappings": [

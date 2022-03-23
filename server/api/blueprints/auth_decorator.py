@@ -4,34 +4,29 @@
 #
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
-import os
-from flask import Blueprint, jsonify, request
-from server.transformer.encode import TransformersEncoder
-from .auth_decorator import authenticate
+from functools import wraps
+from flask import request, abort
+from os import environ
+import logging
 
-encode_blueprint = Blueprint("encode", __name__)
-shared_root = os.environ.get("SHARED_ROOT", "shared")
-if not os.path.isdir(shared_root):
-    raise Exception("Shared missing.")
-
-# load on init so request handler is fast on first hit
-encoder: TransformersEncoder = TransformersEncoder(shared_root)
+log = logging.getLogger()
+api_key = environ.get("API_SECRET_KEY")
 
 
-@encode_blueprint.route("/", methods=["GET", "POST"])
-@encode_blueprint.route("", methods=["GET", "POST"])
-@authenticate
-def encode():
-    if "query" not in request.args:
-        return (jsonify({"query": ["required field"]}), 400)
-    sentence = request.args["query"].strip()
-    result = encoder.encode(sentence)
-    return (
-        jsonify(
-            {
-                "query": sentence,
-                "encoding": result,
-            }
-        ),
-        200,
-    )
+def authenticate(f):
+    """Confirms the bearer token matches"""
+    @wraps(f)
+    def protected_endpoint(*args, **kws):
+        bearer_token = request.headers.get("Authorization", "")
+        token_authentication = bearer_token.lower().startswith("bearer")
+        token_split = bearer_token.split(" ")
+        if not token_authentication or len(token_split) == 1:
+            log.debug("no authentication token provided")
+            abort(401, "no authentication token provided")
+        token = token_split[1]
+        if token != api_key:
+            log.debug("invalid access token")
+            abort(401, "invalid access token")
+        return f(*args, **kws)
+
+    return protected_endpoint

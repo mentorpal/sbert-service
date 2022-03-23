@@ -4,12 +4,12 @@ A dockerized REST API service to encode sentences using [sentence-transformers](
 
 # TODO
 
- - [ ] auth&authz!
  - [ ] json logging
  - [ ] response caching (perhaps with nginx?)
  - [ ] cicd pipeline
  - [ ] WONT DO: detect and use GPU if available
  - [ ] WONT DO: nginx (beanstalk has a built-in one)
+ - [x] auth&authz!
  - [x] measure response time
  - [x] error handlers
  - [x] sentry
