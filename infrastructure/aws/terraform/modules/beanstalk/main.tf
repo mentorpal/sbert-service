@@ -139,12 +139,6 @@ data "aws_acm_certificate" "localregion" {
   statuses = ["ISSUED"]
 }
 
-data "aws_acm_certificate" "cdn" {
-  provider = aws.us-east-1
-  domain   = var.aws_acm_certificate_domain
-  statuses = ["ISSUED"]
-}
-
 data "aws_route53_zone" "main" {
   name = var.aws_route53_zone_name
 }
