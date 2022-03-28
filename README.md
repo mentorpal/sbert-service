@@ -4,8 +4,8 @@ A dockerized REST API service to encode sentences using [sentence-transformers](
 
 # TODO
 
- - [ ] json logging
  - [ ] response caching (perhaps with nginx?)
+ - [ ] json logging
  - [ ] cicd pipeline
  - [ ] WONT DO: detect and use GPU if available
  - [ ] WONT DO: nginx (beanstalk has a built-in one)
