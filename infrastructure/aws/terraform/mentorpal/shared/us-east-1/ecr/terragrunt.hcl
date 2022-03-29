@@ -1,6 +1,6 @@
 locals {
-  account_vars     = read_terragrunt_config(find_in_parent_folders("account.hcl"))
-  aws_account_id           = local.account_vars.locals.aws_account_id
+  account_vars   = read_terragrunt_config(find_in_parent_folders("account.hcl"))
+  aws_account_id = local.account_vars.locals.aws_account_id
 }
 
 terraform {
@@ -16,7 +16,7 @@ inputs = {
   repository_name      = "sbert_service"
   image_tag_mutability = "MUTABLE"
   scan_on_push         = true
-  access_principals    = [
+  access_principals = [
     "arn:aws:iam::${local.aws_account_id}:root",
     # for multi-account setup:
     # "arn:aws:iam::${local.dev_account_id}:root",
