@@ -40,8 +40,8 @@ inputs = {
   cloudwatch_slack_webhook   = local.cloudwatch_slack_webhook
 
   # scaling:
-  eb_env_autoscale_min             = 1 # ~23req/sec with c6i.large
-  eb_env_autoscale_max             = 2 # ~50req/sec with c6i.large
+  eb_env_autoscale_min = 1 # ~23req/sec with c6i.large
+  eb_env_autoscale_max = 1 # ~50req/sec with c6i.large
   # seems like there's no way to set desired capacity and it seems to be max by default?
   eb_env_autoscale_measure_name    = "CPUUtilization"
   eb_env_autoscale_statistic       = "Average"
