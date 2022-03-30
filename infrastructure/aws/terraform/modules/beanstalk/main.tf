@@ -54,35 +54,27 @@ module "elastic_beanstalk_application" {
 # the main elastic beanstalk env
 ###
 module "elastic_beanstalk_environment" {
-  source                     = "git::https://github.com/cloudposse/terraform-aws-elastic-beanstalk-environment.git?ref=tags/0.40.0"
-  namespace                  = var.eb_env_namespace
-  stage                      = var.eb_env_stage
-  name                       = var.eb_env_name
-  attributes                 = var.eb_env_attributes
-  tags                       = var.eb_env_tags
-  delimiter                  = var.eb_env_delimiter
-  description                = var.eb_env_description
-  region                     = var.aws_region
-  availability_zone_selector = var.eb_env_availability_zone_selector
-  # NOTE: We would prefer for the DNS name 
-  # of module.elastic_beanstalk_environment
-  # to be staticly set via inputs,
-  # but have been running into other/different problems
-  # trying to get that to work 
-  # (for one thing, permissions error anytime try to set
-  # elastic_beanstalk_environment.dns_zone_id)
-  # dns_zone_id                = data.aws_elastic_beanstalk_hosted_zone.current.id
-  # dns_zone_id                = var.dns_zone_id
+  source                             = "git::https://github.com/cloudposse/terraform-aws-elastic-beanstalk-environment.git?ref=tags/0.40.0"
+  namespace                          = var.eb_env_namespace
+  stage                              = var.eb_env_stage
+  name                               = var.eb_env_name
+  attributes                         = var.eb_env_attributes
+  tags                               = var.eb_env_tags
+  delimiter                          = var.eb_env_delimiter
+  description                        = var.eb_env_description
+  region                             = var.aws_region
+  availability_zone_selector         = var.eb_env_availability_zone_selector
   wait_for_ready_timeout             = var.eb_env_wait_for_ready_timeout
   elastic_beanstalk_application_name = module.elastic_beanstalk_application.elastic_beanstalk_application_name
   environment_type                   = var.eb_env_environment_type
   loadbalancer_type                  = var.eb_env_loadbalancer_type
-  loadbalancer_certificate_arn       = data.aws_acm_certificate.localregion.arn
-  loadbalancer_ssl_policy            = var.eb_env_loadbalancer_ssl_policy
-  elb_scheme                         = var.eb_env_elb_scheme
-  tier                               = "WebServer"
-  version_label                      = var.eb_env_version_label
-  force_destroy                      = var.eb_env_log_bucket_force_destroy
+  # alb is behind cloudfront and is not available on *.mentorpal.org so this cert is not applicable:
+  # loadbalancer_certificate_arn       = data.aws_acm_certificate.localregion.arn
+  loadbalancer_ssl_policy = var.eb_env_loadbalancer_ssl_policy
+  elb_scheme              = var.eb_env_elb_scheme
+  tier                    = "WebServer"
+  version_label           = var.eb_env_version_label
+  force_destroy           = var.eb_env_log_bucket_force_destroy
 
   enable_stream_logs                   = var.eb_env_enable_stream_logs
   logs_delete_on_terminate             = var.eb_env_logs_delete_on_terminate
@@ -126,8 +118,8 @@ module "elastic_beanstalk_environment" {
   solution_stack_name = data.aws_elastic_beanstalk_solution_stack.multi_docker.name
   additional_settings = var.eb_env_additional_settings
   env_vars            = var.eb_env_env_vars
-  
-  prefer_legacy_ssm_policy     = false
+
+  prefer_legacy_ssm_policy = false
 }
 
 ###
@@ -139,46 +131,82 @@ data "aws_acm_certificate" "localregion" {
   statuses = ["ISSUED"]
 }
 
-data "aws_route53_zone" "main" {
-  name = var.aws_route53_zone_name
-}
-
-# create dns record of type "A"
-resource "aws_route53_record" "site_domain_name" {
-  zone_id         = data.aws_route53_zone.main.zone_id
-  name            = var.site_domain_name
-  type            = "A"
-  allow_overwrite = true
-  alias {
-    name                   = module.elastic_beanstalk_environment.endpoint
-    zone_id                = data.aws_elastic_beanstalk_hosted_zone.current.id
-    evaluate_target_health = true
-  }
-}
-
-# find the HTTP load-balancer listener, so we can redirect to HTTPS
+# find the load-balancer so we can setup the alarms later
 data "aws_lb_listener" "http_listener" {
   load_balancer_arn = module.elastic_beanstalk_environment.load_balancers[0]
   port              = 80
 }
 
-# set the HTTP -> HTTPS redirect rule for any request matching site domain
-resource "aws_lb_listener_rule" "redirect_http_to_https" {
-  listener_arn = data.aws_lb_listener.http_listener.arn
-  action {
-    type = "redirect"
-    redirect {
-      port        = "443"
-      protocol    = "HTTPS"
-      status_code = "HTTP_301"
+######
+# CloudFront distro for caching
+# - 
+######
+
+# the default policy does not include query strings as cache keys
+resource "aws_cloudfront_cache_policy" "cdn_cache" {
+  name        = "${local.namespace}-cdn-cache-policy"
+  default_ttl = 86400 # 1 day
+  min_ttl     = 0
+  max_ttl     = 604800 # 1 week
+
+  parameters_in_cache_key_and_forwarded_to_origin {
+    cookies_config {
+      cookie_behavior = "none"
     }
-  }
-  condition {
-    host_header {
-      values = [var.site_domain_name]
+    headers_config {
+      header_behavior = "none"
+    }
+    query_strings_config {
+      query_string_behavior = "all"
     }
   }
 }
+
+resource "aws_cloudfront_origin_request_policy" "cdn_origin_policy" {
+  name = "${local.namespace}-cdn-origin-policy"
+
+  cookies_config {
+    cookie_behavior = "none"
+  }
+  headers_config {
+    header_behavior = "allViewer"
+    # just need Authorization but apply fails with:
+    # InvalidArgument: The parameter Headers contains Authorization that is not allowed.
+    # headers {
+    #   items = ["Authorization", "Origin", "Access-Control-Request-Headers", "Access-Control-Request-Method"]
+    # }
+  }
+  query_strings_config {
+    query_string_behavior = "all"
+  }
+}
+
+
+module "cdn" {
+  source                   = "git::https://github.com/cloudposse/terraform-aws-cloudfront-cdn.git?ref=tags/0.24.1"
+  name                     = var.eb_env_name
+  namespace                = var.eb_env_namespace
+  stage                    = var.eb_env_stage
+  aliases                  = [var.site_domain_name]
+  origin_domain_name       = module.elastic_beanstalk_environment.endpoint
+  origin_protocol_policy   = "https-only"
+  viewer_protocol_policy   = "https-only"
+  is_ipv6_enabled          = true
+  parent_zone_name         = var.aws_route53_zone_name
+  forward_query_string     = true
+  forward_cookies          = "none"
+  cache_policy_id          = resource.aws_cloudfront_cache_policy.cdn_cache.id
+  origin_request_policy_id = resource.aws_cloudfront_origin_request_policy.cdn_origin_policy.id
+  compress                 = true
+  cached_methods           = ["GET", "HEAD"]
+  allowed_methods          = ["GET", "HEAD", "OPTIONS"]
+  price_class              = "PriceClass_All"
+  acm_certificate_arn      = data.aws_acm_certificate.localregion.arn
+  # logging config, disable because we have from the service itself
+  logging_enabled     = false
+  log_expiration_days = 30
+}
+
 
 ######
 # Cloudwatch alarms

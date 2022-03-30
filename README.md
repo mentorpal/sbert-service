@@ -4,11 +4,11 @@ A dockerized REST API service to encode sentences using [sentence-transformers](
 
 # TODO
 
- - [ ] response caching (perhaps with nginx?)
  - [ ] json logging
  - [ ] cicd pipeline
  - [ ] WONT DO: detect and use GPU if available
  - [ ] WONT DO: nginx (beanstalk has a built-in one)
+ - [x] response caching (CloudFront)
  - [x] auth&authz!
  - [x] measure response time
  - [x] error handlers
@@ -44,23 +44,31 @@ make test
 First install [k6](https://k6.io/docs/) and then:
 
 ```
-cd tools && k6 run --vus 10 -i 5000 questions-k6.js
-# output:
+cd tools && API_KEY=<redacted> k6 run --vus 10 -i 5000 encode-k6.js
+# before CloudFront:
 # default ✓ [======================================] 10 VUs  06m04.3s/10m0s  5000/5000 shared iters
 #     http_reqs......................: 5000    13.724361/s
 #     http_req_duration..............: avg=727.26ms min=78.93ms med=701.05ms max=1.21s  p(90)=812.63ms p(95)=944.71ms
+#
+# with CloudFront:
+default ✓ [======================================] 10 VUs  02m07.7s/10m0s  5000/5000 shared iters
+#     http_reqs......................: 5000    39.147187/s
+#     http_req_duration..............: avg=254.12ms min=22.85ms med=300.96ms max=805.31ms p(90)=455.77ms p(95)=495.56ms
 
-cd tools && k6 run --vus 20 -i 200 questions-k6.js
-# output:
+cd tools && API_KEY=<redacted> k6 run --vus 20 -i 200 encode-k6.js
+# before CloudFront:
 # default ✓ [======================================] 20 VUs  00m15.3s/10m0s  200/200 shared iters
      http_reqs......................: 200     13.070371/s
      http_req_duration..............: avg=1.46s    min=854.79ms med=1.46s max=2.24s  p(90)=1.53s    p(95)=1.55s
+# with CloudFront:
+     http_reqs......................: 200     23.436861/s
+     http_req_duration..............: avg=697.5ms  min=159.38ms med=731.63ms max=964.7ms  p(90)=873.5ms  p(95)=910.62ms
 ```
 
 Testing auto-scaling:
 
 ```
-$ k6 run --vus 40 --duration 5m ./encode-k6.js
+$ API_KEY=<redacted> k6 run --vus 40 --duration 5m ./encode-k6.js
 
           /\      |‾‾| /‾‾/   /‾‾/
      /\  /  \     |  |/  /   /  /

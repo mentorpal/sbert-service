@@ -14,11 +14,17 @@ const questions = new SharedArray("user questions", function () {
   return JSON.parse(open("./questions.json"));
 });
 
+const params = {
+  headers: {
+    'Authorization': `Bearer ${__ENV.API_KEY}`,
+  },
+};
+
 export default function () {
   // randomly pick one mentor and question:
   const q = questions[Math.floor(Math.random() * questions.length)];
   const url = `${apiUrl}?query=${encodeURIComponent(q)}`;
-  const req = http.get(url.toString());
+  const req = http.get(url.toString(), params);
 
   check(req, {
     "is status 200": (r) => r.status === 200,
