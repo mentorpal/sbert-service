@@ -39,6 +39,18 @@ To run unit tests:
 make test
 ```
 
+## Deployment
+
+To provision the infrastructure use terragrunt and terrafrom and apply `sbert-service`.
+
+To use ECR instead of dockerhub, apply the shared/ecr module. To get login credentials
+go to the AWS console, open the sbert_service repository (e.g.
+https://us-east-1.console.aws.amazon.com/ecr/repositories/private/<account_id>/sbert_service?region=us-east-1),
+then click on the "View push commands", it will explain how to login, tag and push. 
+
+Use `make docker-build` to build the image, then tag and push. Update the ebs/bundle/Dockerrun.aws.json to
+point to the tagged image, and then run `make deploy.zip`. After that go to the beanstalk console and upload the zip. 
+
 ## Load test
 
 First install [k6](https://k6.io/docs/) and then:
@@ -108,6 +120,12 @@ default ✓ [======================================] 40 VUs  5m0s
      vus............................: 7       min=7       max=40
      vus_max........................: 40      min=40      max=40
 ```
+
+# Known Issues
+
+- The (beanstalk module)[https://github.com/cloudposse/terraform-aws-elastic-beanstalk-environment] does not allow to specify desired instances count for autoscaling and it seems to be max by default.
+- The (beanstalk module)[https://github.com/cloudposse/terraform-aws-elastic-beanstalk-environment] does not allow to specify desired duration period for autoscaling and it's 5min by default (would be better to be more aggresive)
+
 
 ## Licensing
 
