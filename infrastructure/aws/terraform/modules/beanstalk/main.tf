@@ -189,7 +189,7 @@ module "cdn" {
   stage                    = var.eb_env_stage
   aliases                  = [var.site_domain_name]
   origin_domain_name       = module.elastic_beanstalk_environment.endpoint
-  origin_protocol_policy   = "https-only"
+  origin_protocol_policy   = "http-only"
   viewer_protocol_policy   = "https-only"
   is_ipv6_enabled          = true
   parent_zone_name         = var.aws_route53_zone_name
@@ -199,7 +199,8 @@ module "cdn" {
   origin_request_policy_id = resource.aws_cloudfront_origin_request_policy.cdn_origin_policy.id
   compress                 = true
   cached_methods           = ["GET", "HEAD"]
-  allowed_methods          = ["GET", "HEAD", "OPTIONS"]
+  # put, patch and delete are not required but CF only allows 3 choices
+  allowed_methods          = ["HEAD", "DELETE", "POST", "GET", "OPTIONS", "PUT", "PATCH"]  
   price_class              = "PriceClass_All"
   acm_certificate_arn      = data.aws_acm_certificate.localregion.arn
   # logging config, disable because we have from the service itself

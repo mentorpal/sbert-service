@@ -8,6 +8,15 @@ A dockerized REST API service to encode sentences using [sentence-transformers](
  - [ ] cicd pipeline
  - [ ] https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/restrict-access-to-load-balancer.html
  - [ ] swagger
+ - [ ] CloudFront respond with json on errors:
+ < HTTP/2 403
+< content-type: text/html
+< x-cache: Error from cloudfront
+<
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<HTML><HEAD><META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<TITLE>ERROR: The request could not be satisfied</TITLE>
+...
  - [ ] WONT DO: detect and use GPU if available
  - [ ] WONT DO: nginx (beanstalk has a built-in one)
  - [x] response caching (CloudFront)
@@ -40,6 +49,15 @@ To run unit tests:
 ```
 make test
 ```
+
+To invoke the API manually (qa is the stage):
+
+```bash
+curl -H "Authorization: Bearer secret_key" https://sbert-qa.mentorpal.org/v1/encode\?query\=hello+world
+
+curl -H "Authorization: Bearer secret_key" -H 'Content-type: application/json' https://sbert-qa.mentorpal.org/v1/encode/cos_sim_weight --data-raw '{"a":["hello world"],"b":["hi world"]}'
+```
+
 
 ## Deployment
 
