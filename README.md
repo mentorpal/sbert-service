@@ -6,6 +6,8 @@ A dockerized REST API service to encode sentences using [sentence-transformers](
 
  - [ ] json logging
  - [ ] cicd pipeline
+ - [ ] https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/restrict-access-to-load-balancer.html
+ - [ ] swagger
  - [ ] WONT DO: detect and use GPU if available
  - [ ] WONT DO: nginx (beanstalk has a built-in one)
  - [x] response caching (CloudFront)
