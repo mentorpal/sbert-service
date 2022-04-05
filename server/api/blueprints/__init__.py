@@ -4,3 +4,13 @@
 #
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
+import os
+from server.transformer.encode import TransformersEncoder
+
+
+shared_root = os.environ.get("SHARED_ROOT", "shared")
+if not os.path.isdir(shared_root):
+    raise Exception("Shared missing.")
+
+# load on init so request handler is fast on first hit
+encoder: TransformersEncoder = TransformersEncoder(shared_root)

@@ -5,12 +5,35 @@
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
 import logging
+import queue
 from typing import Union, List
-from torch import Tensor
+from torch import Tensor, tensor, topk, mm, nn
 from numpy import ndarray
 from .embeddings import TransformerEmbeddings, load_transformer
 
 logging.info("encoder init")
+
+
+def cos_sim(a: Tensor, b: Tensor):
+    """
+    Computes the cosine similarity cos_sim(a[i], b[j]) for all i and j.
+    :return: Matrix with res[i][j]  = cos_sim(a[i], b[j])
+    """
+    if not isinstance(a, Tensor):
+        a = tensor(a)
+
+    if not isinstance(b, Tensor):
+        b = tensor(b)
+
+    if len(a.shape) == 1:
+        a = a.unsqueeze(0)
+
+    if len(b.shape) == 1:
+        b = b.unsqueeze(0)
+
+    a_norm = nn.functional.normalize(a, p=2, dim=1)
+    b_norm = nn.functional.normalize(b, p=2, dim=1)
+    return mm(a_norm, b_norm.transpose(0, 1))
 
 
 class TransformersEncoder:
@@ -31,3 +54,11 @@ class TransformersEncoder:
         logging.info(question)
         embedded_question = self.transformer.get_embeddings(question)
         return embedded_question.tolist()
+
+    def cos_sim_weight(self, a: List[str], b: List[str]):
+        return float(
+            cos_sim(
+                self.transformer.get_embeddings(a, convert_to_tensor=True),
+                self.transformer.get_embeddings(b, convert_to_tensor=True),
+            )
+        )

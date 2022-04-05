@@ -42,8 +42,19 @@ class TransformerEmbeddings:
             path.join(shared_root, "sentence-transformer")
         )
 
-    def get_embeddings(self, data: Union[str, List[str]]):
-        embeddings = self.transformer.encode(data, show_progress_bar=False)
+    def get_embeddings(self, data: Union[str, List[str]],
+            batch_size=32,
+            show_progress_bar=False,
+            convert_to_numpy=True,
+            convert_to_tensor=False,
+    ):
+        embeddings = self.transformer.encode(
+            data,
+            show_progress_bar=show_progress_bar,
+            batch_size=batch_size,
+            convert_to_numpy=convert_to_numpy,
+            convert_to_tensor=convert_to_tensor,
+        )
         return embeddings
 
 

@@ -4,21 +4,14 @@
 #
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
-import os
+import logging
 from flask import Blueprint, jsonify, request
-from server.transformer.encode import TransformersEncoder
+from . import encoder
 from .auth_decorator import authenticate
 
 encode_blueprint = Blueprint("encode", __name__)
-shared_root = os.environ.get("SHARED_ROOT", "shared")
-if not os.path.isdir(shared_root):
-    raise Exception("Shared missing.")
-
-# load on init so request handler is fast on first hit
-encoder: TransformersEncoder = TransformersEncoder(shared_root)
 
 
-@encode_blueprint.route("/", methods=["GET", "POST"])
 @encode_blueprint.route("", methods=["GET", "POST"])
 @authenticate
 def encode():
@@ -31,6 +24,32 @@ def encode():
             {
                 "query": sentence,
                 "encoding": result,
+            }
+        ),
+        200,
+    )
+
+
+@encode_blueprint.route("cos_sim_weight", methods=["POST"])
+@authenticate
+def cos_sim_weight():
+    '''
+    Computes the cosine similarity cos_sim(a[i], b[j]) for all i and j.
+    :return: Matrix with res[i][j]  = cos_sim(a[i], b[j])
+    '''
+    if not request.content_type.lower().startswith('application/json'):
+        return (jsonify({"error": ["invalid content type, only json accepted"]}), 400)
+    logging.info(request.data)
+
+    if "a" not in request.json or "b" not in request.json:
+        return (jsonify({"a and b sentences": ["required field"]}), 400)
+    result = encoder.cos_sim_weight(request.json["a"], request.json["b"])
+    return (
+        jsonify(
+            {
+                # "a": request.json["a"],
+                # "b": request.json["b"],
+                "cos_sim_weight": result,
             }
         ),
         200,
