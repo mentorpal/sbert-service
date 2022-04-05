@@ -14,6 +14,7 @@ from werkzeug.exceptions import HTTPException
 from .blueprints.encode import encode_blueprint
 from .blueprints.ping import ping_blueprint
 from .blueprints.health import health_blueprint
+from .blueprints.paraphrase import paraphrase_blueprint
 
 
 def create_app():
@@ -31,6 +32,7 @@ def _setup_route_handlers(app):
     app.register_blueprint(health_blueprint, url_prefix="/")
     app.register_blueprint(ping_blueprint, url_prefix="/v1/ping")
     app.register_blueprint(encode_blueprint, url_prefix="/v1/encode")
+    app.register_blueprint(paraphrase_blueprint, url_prefix="/v1/paraphrase")
 
     @app.route("/v1/debug-sentry")
     def _error_handler_test():
