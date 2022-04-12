@@ -73,16 +73,30 @@ def _setup_sentry():
         import sentry_sdk  # NOQA E402
         from sentry_sdk.integrations.flask import FlaskIntegration  # NOQA E402
 
+        def traces_sampler(sampling_context):
+            """
+            see https://docs.sentry.io/platforms/python/guides/flask/configuration/sampling/
+            """
+            op = sampling_context["transaction_context"]["op"]
+            if op == "http.server":
+                if "OPTIONS" == sampling_context["wsgi_environ"]["REQUEST_METHOD"]:
+                    return 0.0
+                path = sampling_context["wsgi_environ"]["PATH_INFO"]
+                if path == "/" or path == "/v1/ping":
+                    # Drop this transaction, by setting its sample rate to 0%
+                    return 0.0
+
+                # Set traces_sample_rate to 1.0 to capture 100%
+                # of transactions for performance monitoring.
+                return 0.2
+
         logging.info("SENTRY enabled, calling init")
         sentry_sdk.init(
             dsn=environ.get("SENTRY_DSN_MENTOR_SBERT_SERVICE"),
             # include project so issues can be filtered in sentry:
             environment=environ.get("STAGE", "qa"),
             integrations=[FlaskIntegration()],
-            # Set traces_sample_rate to 1.0 to capture 100%
-            # of transactions for performance monitoring.
-            # We recommend adjusting this value in production.
-            traces_sample_rate=0.20,
+            traces_sampler=traces_sampler,
             debug=environ.get("SENTRY_DEBUG_SBERT_SERVICE", "") == "true",
         )
 
