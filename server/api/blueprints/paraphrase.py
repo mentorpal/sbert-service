@@ -15,15 +15,15 @@ paraphrase_blueprint = Blueprint("paraphrase_mining", __name__)
 @paraphrase_blueprint.route("", methods=["POST"])
 @authenticate
 def paraphrase():
-    if not request.content_type.lower().startswith('application/json'):
+    if not request.content_type.lower().startswith("application/json"):
         return (jsonify({"error": ["invalid content type, only json accepted"]}), 400)
     logging.info(request.data)
     if "sentences" not in request.json:
         return (jsonify({"sentences": ["required field"]}), 400)
-    
+
     sentences = request.json["sentences"]
     result = encoder.paraphrase_mining(sentences)
-    logging.info("input length: %s, results: %s",len(sentences), len(result))
+    logging.info("input length: %s, results: %s", len(sentences), len(result))
 
     return (
         jsonify(

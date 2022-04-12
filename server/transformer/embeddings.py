@@ -42,11 +42,13 @@ class TransformerEmbeddings:
             path.join(shared_root, "sentence-transformer")
         )
 
-    def get_embeddings(self, data: Union[str, List[str]],
-            batch_size=32,
-            show_progress_bar=False,
-            convert_to_numpy=True,
-            convert_to_tensor=False,
+    def get_embeddings(
+        self,
+        data: Union[str, List[str]],
+        batch_size=32,
+        show_progress_bar=False,
+        convert_to_numpy=True,
+        convert_to_tensor=False,
     ):
         embeddings = self.transformer.encode(
             data,

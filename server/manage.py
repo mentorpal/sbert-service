@@ -22,15 +22,17 @@ except Exception as x:
 
 @app.before_request
 def before_request():
-    log.info('%s', request.full_path)
+    log.info("%s", request.full_path)
     g.start = time.time_ns()
 
 
 @app.after_request
 def after_request(response):
-    """ Logging after every request. """
-    if response.response and request.blueprint == "encode" and (
-        response.status_code < 500
+    """Logging after every request."""
+    if (
+        response.response
+        and request.blueprint == "encode"
+        and (response.status_code < 500)
     ):  # 5xx should be logged in error handler
         now = time.time_ns()
         g.response_time = (now - g.start) // 1_000_000  # in milliseconds

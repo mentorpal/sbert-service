@@ -15,6 +15,7 @@ api_key = environ.get("API_SECRET_KEY")
 
 def authenticate(f):
     """Confirms the bearer token matches"""
+
     @wraps(f)
     def protected_endpoint(*args, **kws):
         bearer_token = request.headers.get("Authorization", "")

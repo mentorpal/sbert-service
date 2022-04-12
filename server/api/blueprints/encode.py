@@ -33,11 +33,11 @@ def encode():
 @encode_blueprint.route("cos_sim_weight", methods=["POST"])
 @authenticate
 def cos_sim_weight():
-    '''
+    """
     Computes the cosine similarity cos_sim(a[i], b[j]) for all i and j.
     :return: Matrix with res[i][j]  = cos_sim(a[i], b[j])
-    '''
-    if not request.content_type.lower().startswith('application/json'):
+    """
+    if not request.content_type.lower().startswith("application/json"):
         return (jsonify({"error": ["invalid content type, only json accepted"]}), 400)
     logging.info(request.data)
 
