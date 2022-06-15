@@ -3,7 +3,7 @@
   "containerDefinitions": [
     {
       "name": "sbert-service",
-      "image": "mentorpal/sbert-service:1.0.0-alpha.2",
+      "image": "639093085655.dkr.ecr.us-east-1.amazonaws.com/sbert_service:1.0.0-alpha.5",
       "essential": true,
       "memory": 3600,
       "portMappings": [

@@ -10,7 +10,7 @@ from os import environ
 import logging
 
 log = logging.getLogger()
-api_key = environ.get("API_SECRET_KEY")
+api_keys = set(environ.get("API_SECRET_KEY").split(","))
 
 
 def authenticate(f):
@@ -25,7 +25,7 @@ def authenticate(f):
             log.debug("no authentication token provided")
             abort(401, "no authentication token provided")
         token = token_split[1]
-        if token != api_key:
+        if token not in api_keys:
             log.debug("invalid access token")
             abort(401, "invalid access token")
         return f(*args, **kws)
