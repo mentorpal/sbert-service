@@ -70,6 +70,7 @@ module "elastic_beanstalk_environment" {
   loadbalancer_type                  = var.eb_env_loadbalancer_type
   # alb is behind cloudfront and is not available on *.mentorpal.org so this cert is not applicable:
   # loadbalancer_certificate_arn       = data.aws_acm_certificate.localregion.arn
+  ssh_listener_enabled    = false
   loadbalancer_ssl_policy = var.eb_env_loadbalancer_ssl_policy
   elb_scheme              = var.eb_env_elb_scheme
   tier                    = "WebServer"
@@ -120,6 +121,7 @@ module "elastic_beanstalk_environment" {
   env_vars            = var.eb_env_env_vars
 
   prefer_legacy_ssm_policy = false
+  managed_actions_enabled  = true
 }
 
 ###
