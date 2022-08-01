@@ -1,0 +1,143 @@
+name: test/build/push
+on: 
+  push:
+    branches:
+      - main
+
+jobs:
+  test:
+    name: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          lfs: true
+
+      - name: python env setup
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+      - uses: actions/setup-node@v1
+        with:
+          node-version: "16.15"
+
+      - name: poetry install
+        run: |
+          curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
+          source $HOME/.poetry/env
+          echo "$HOME/.poetry/bin" >> $GITHUB_PATH
+      - name: test format
+        run: make test-format
+      - name: test lint
+        run: make test-lint
+      - name: test types
+        run: make test-types
+      - name: test licenses
+        run: make test-license
+
+  workflow-check:
+    name: workflow check
+    needs:
+      - test
+    runs-on: ubuntu-latest
+    outputs:
+      is_release_tag: ${{ steps.is_release.outputs.is_release_tag }}    
+      is_build_disabled: ${{ steps.is_build_disabled.outputs.is_build_disabled }}
+      is_deploy_disabled: ${{ steps.is_deploy_disabled.outputs.is_deploy_disabled }}
+    steps:
+      - id: is_release_tag
+        run: |
+          if [[ ${{ github.event.ref }} =~ ^refs/tags/[0-9]+\.[0-9]+\.[0-9]+(-[a-z0-9.]*)?$ ]]; then
+              echo ::set-output name=is_release_tag::true
+          fi
+      - id: is_build_disabled
+        run: |
+          if [[ -z "${{secrets.DOCKER_LOGIN}}" ]]; then
+              echo "deploy is disabled on this repo because secret DOCKER_LOGIN is unset"
+              echo ::set-output name=is_deploy_disabled::true
+          elif [[ -z "${{secrets.DOCKER_PASSWORD}}" ]]; then
+              echo "deploy is disabled on this repo because secret DOCKER_PASSWORD is unset"
+              echo ::set-output name=is_deploy_disabled::true
+          fi
+      - id: is_deploy_disabled
+        run: |
+          if [[ -z "${{secrets.AWS_ACCESS_KEY_ID}}" ]]; then
+              echo "deploy is disabled on this repo because secret AWS_ACCESS_KEY_ID is unset"
+              echo ::set-output name=is_deploy_disabled::true
+          elif [[ -z "${{secrets.AWS_SECRET_ACCESS_KEY}}" ]]; then
+              echo "deploy is disabled on this repo because secret AWS_SECRET_ACCESS_KEY is unset"
+              echo ::set-output name=is_deploy_disabled::true
+          elif [[ -z "${{secrets.AWS_REGION}}" ]]; then
+              echo "deploy is disabled on this repo because secret AWS_REGION is unset"
+              echo ::set-output name=is_deploy_disabled::true
+          elif [[ -z "${{secrets.EBS_APP_NAME}}" ]]; then
+              echo "deploy is disabled on this repo because EBS_APP_NAME is unset in secrets"
+              echo ::set-output name=is_deploy_disabled::true
+          elif [[ -z "${{secrets.EBS_ENV_NAME}}" ]]; then
+              echo "deploy is disabled on this repo because EBS_ENV_NAME is unset in secrets"
+              echo ::set-output name=is_deploy_disabled::true
+          fi
+
+  build-and-publish:
+    name: build + push docker image
+    runs-on: ubuntu-latest
+    needs:
+      - workflow-check
+      - test
+    if: true && !needs.workflow-check.outputs.is_build_disabled
+    steps:
+      - uses: actions/checkout@v2
+      - name: docker tag
+        id: tag
+        run: |
+          IMAGE_TAG=${GITHUB_SHA}
+          echo ::set-output name=image_tag::${IMAGE_TAG}
+      - name: docker login
+        run: docker login -u ${{ secrets.DOCKER_LOGIN }} -p ${{ secrets.DOCKER_PASSWORD }}
+      - name: docker build
+        run: DOCKER_IMAGE=mentorpal/sbert-service:${{ steps.tag.outputs.image_tag }} make docker-build
+      - name: docker tag release as version
+        if: needs.publish-check.outputs.is_release_tag == 'true'
+        run: |
+          docker tag "mentorpal/sbert-service:${{ steps.tag.outputs.image_tag }}" "mentorpal/sbert-service:${GITHUB_REF#refs/tags/}"
+      - name: docker tag main as latest
+        if: github.ref == 'refs/heads/main'
+        run: |
+          docker tag "mentorpal/sbert-service:${{ steps.tag.outputs.image_tag }}" "mentorpal/sbert-service:latest"
+      - name: docker push
+        run: docker push --all-tags mentorpal/sbert-service
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs:
+      - workflow-check
+    if: needs.workflow-check.outputs.is_release_tag && !needs.workflow-check.outputs.is_deploy_disabled
+    steps:
+    - uses: actions/checkout@v1
+      with:
+        lfs: true
+    - name: Create deploy.zip
+      env:
+        TAG: mentorpal/sbert-service:${{ steps.tag.outputs.image_tag }}
+      run: |
+        sed -i -e "s|@TAG|$TAG|g" ebs/bundle/Dockerrun.aws.json
+        cat ebs/bundle/Dockerrun.aws.json
+        make deploy.zip
+    - name: Log zip contents
+      run: unzip -l deploy.zip
+    - name: Extract tag as version
+      shell: bash
+      # bash parameter expansion won't work below where we need the release tag
+      # so extract it to an output first here
+      run: echo "##[set-output name=version;]$(echo ${GITHUB_REF#refs/tags/})"
+      id: extract_tag_as_version
+    - name: Beanstalk deploy release
+      uses: einaregilsson/beanstalk-deploy@v14
+      with:
+        aws_access_key: ${{secrets.AWS_ACCESS_KEY_ID}}
+        aws_secret_key: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+        region: ${{secrets.AWS_REGION}}
+        application_name: ${{secrets.EBS_APP_NAME}}
+        environment_name: ${{secrets.EBS_ENV_NAME}}
+        version_label: "${{secrets.EBS_APP_NAME}}-${{steps.extract_tag_as_version.outputs.version}}"
+        deployment_package: deploy.zip
