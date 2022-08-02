@@ -15,7 +15,7 @@ def download(url: str, to_path: str):
     print("downloading")
     print(f"\tfrom {url}")
     print(f"\tto {to_path}")
-    
+
     req = request.Request(url)
     response = request.urlopen(req)
     content = response.read().decode()

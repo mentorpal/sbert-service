@@ -15,7 +15,6 @@ docker-build: transformer.pkl sentence-transformers
 # squash reduces final image size by merging layers
 	docker build --squash -t mentorpal/sbert-service .
 
-
 node_modules:
 	npm ci
 

@@ -14,6 +14,7 @@ def test_returns_400_response_when_query_missing(client):
     res = client.get("/v1/encode/")
     assert res.status_code == 400
 
+
 def test_hello_world(client):
     res = client.get("/v1/encode?query=hello+world")
     assert res.status_code == 200
