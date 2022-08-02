@@ -13,7 +13,7 @@ install: poetry-ensure-installed
 .PHONY docker-build:
 docker-build: transformer.pkl sentence-transformers
 # squash reduces final image size by merging layers
-	docker build --squash -t mentorpal/sbert-service .
+	docker build --squash -t $(DOCKER_IMAGE) .
 
 shared/installed:
 	mkdir -p shared/installed
@@ -69,7 +69,8 @@ license: LICENSE LICENSE_HEADER $(VENV)
 
 .PHONY: poetry-ensure-installed
 poetry-ensure-installed:
-	sh ./tools/poetry_ensure_installed.sh
+	./tools/poetry_ensure_installed.sh
+	source $HOME/.poetry/env
 
 .PHONY: test
 test: $(VENV)
