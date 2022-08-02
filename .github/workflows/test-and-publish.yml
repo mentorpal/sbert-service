@@ -30,8 +30,6 @@ jobs:
         run: make test-format
       - name: test lint
         run: make test-lint
-      - name: test types
-        run: make test-types
       - name: test licenses
         run: make test-license
 
