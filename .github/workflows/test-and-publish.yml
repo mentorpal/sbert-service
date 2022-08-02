@@ -110,6 +110,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     needs:
+      - build-and-publish
       - workflow-check
     if: needs.workflow-check.outputs.is_release_tag && !needs.workflow-check.outputs.is_deploy_disabled
     steps:
