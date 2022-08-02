@@ -104,8 +104,14 @@ class TransformersEncoder:
         for corpus_start_idx in range(0, len(embeddings), corpus_chunk_size):
             for query_start_idx in range(0, len(embeddings), query_chunk_size):
                 scores = cos_sim(
-                    embeddings[query_start_idx : query_start_idx + query_chunk_size],  # noqa: E203
-                    embeddings[corpus_start_idx : corpus_start_idx + corpus_chunk_size],  # noqa: E203
+                    embeddings[
+                        query_start_idx : query_start_idx  # noqa: E203
+                        + query_chunk_size
+                    ],
+                    embeddings[
+                        corpus_start_idx : corpus_start_idx  # noqa: E203
+                        + corpus_chunk_size
+                    ],
                 )
 
                 scores_top_k_values, scores_top_k_idx = topk(
