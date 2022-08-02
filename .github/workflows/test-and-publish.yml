@@ -51,11 +51,11 @@ jobs:
       - id: is_build_disabled
         run: |
           if [[ -z "${{secrets.DOCKER_LOGIN}}" ]]; then
-              echo "deploy is disabled on this repo because secret DOCKER_LOGIN is unset"
-              echo ::set-output name=is_deploy_disabled::true
+              echo "docker build is disabled on this repo because secret DOCKER_LOGIN is unset"
+              echo ::set-output name=is_build_disabled::true
           elif [[ -z "${{secrets.DOCKER_PASSWORD}}" ]]; then
-              echo "deploy is disabled on this repo because secret DOCKER_PASSWORD is unset"
-              echo ::set-output name=is_deploy_disabled::true
+              echo "docker build is disabled on this repo because secret DOCKER_PASSWORD is unset"
+              echo ::set-output name=is_build_disabled::true
           fi
       - id: is_deploy_disabled
         run: |
