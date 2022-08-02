@@ -70,7 +70,7 @@ license: LICENSE LICENSE_HEADER $(VENV)
 .PHONY: poetry-ensure-installed
 poetry-ensure-installed:
 	./tools/poetry_ensure_installed.sh
-	. $HOME/.poetry/env
+	. $(HOME)/.poetry/env
 
 .PHONY: test
 test: $(VENV)
