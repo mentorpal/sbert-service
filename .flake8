@@ -11,4 +11,6 @@ exclude =
     .venv,
     .vscode,
     build,
+    infrastructure,
+    tools,
     shared
