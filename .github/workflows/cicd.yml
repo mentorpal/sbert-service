@@ -85,6 +85,9 @@ jobs:
     if: true && !needs.workflow-check.outputs.is_build_disabled
     steps:
       - uses: actions/checkout@v2
+        with:
+          lfs: true
+      
       - name: docker tag
         id: tag
         run: |
@@ -92,6 +95,11 @@ jobs:
           echo ::set-output name=image_tag::${IMAGE_TAG}
       - name: docker login
         run: docker login -u ${{ secrets.DOCKER_LOGIN }} -p ${{ secrets.DOCKER_PASSWORD }}
+      - name: poetry install
+        run: |
+          curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
+          source $HOME/.poetry/env
+          echo "$HOME/.poetry/bin" >> $GITHUB_PATH        
       - name: docker build
         run: DOCKER_IMAGE=mentorpal/sbert-service:${{ steps.tag.outputs.image_tag }} make docker-build
       - name: docker tag release as version
