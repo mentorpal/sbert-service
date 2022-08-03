@@ -2,7 +2,7 @@
 transformer_path=installed/sentence-transformer/distilbert-base-nli-mean-tokens
 OUTFILE="${transformer_path}/distilbert-base-nli-mean-tokens.zip"
 
-if [[ -e ${transformer_path} ]]
+if [ -e ${transformer_path} ]
 then
     echo "Transformer already downloaded"
     exit 0
