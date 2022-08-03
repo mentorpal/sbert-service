@@ -12,8 +12,9 @@ install: poetry-ensure-installed
 
 .PHONY docker-build:
 docker-build: sentence-transformers transformer.pkl
-# squash reduces final image size by merging layers
-	docker build --squash -t $(DOCKER_IMAGE) .
+# squash reduces final image size by merging layers `--squash`
+# but its not supported in github actions
+	docker build -t $(DOCKER_IMAGE) .
 
 shared/installed:
 	mkdir -p shared/installed
