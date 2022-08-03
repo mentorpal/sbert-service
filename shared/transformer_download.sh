@@ -1,5 +1,5 @@
 #!/bin/sh
-transformer_path=installed/sentence-transformer
+transformer_path=installed/sentence-transformer/distilbert-base-nli-mean-tokens
 OUTFILE="${transformer_path}/distilbert-base-nli-mean-tokens.zip"
 
 if [[ -e ${transformer_path} ]]
