@@ -11,18 +11,19 @@ install: poetry-ensure-installed
 	poetry install
 
 .PHONY docker-build:
-docker-build: transformer.pkl sentence-transformers
+docker-build: sentence-transformers transformer.pkl
 # squash reduces final image size by merging layers
 	docker build --squash -t $(DOCKER_IMAGE) .
 
 shared/installed:
 	mkdir -p shared/installed
 
-transformer.pkl: $(VENV) shared/installed
-	poetry run python ./server/transformer/embeddings.py ./shared/installed
-
 sentence-transformers: shared/installed
-	cd shared && python sentence_transformer_download.py 
+#	cd shared && python sentence_transformer_download.py
+	cd shared && ./transformer_download.sh
+
+transformer.pkl: $(VENV) shared/installed sentence-transformers
+	poetry run python ./server/transformer/embeddings.py ./shared/installed
 
 build/deploy:
 	# put everything we want in our beanstalk deploy.zip file
