@@ -5,11 +5,12 @@
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
 from dataclasses import dataclass
-import logging
 import json
 from typing import List
 from flask import Blueprint, jsonify, request
-from . import encoder
+
+from server.transformer import word2vec_transformer
+from . import w2v_transformer
 from .auth_decorator import authenticate
 
 w2v_blueprint = Blueprint("w2v", __name__)
@@ -26,13 +27,5 @@ def encode():
         return (jsonify({"error": "missing json body"}), 400) 
     json_body = request.get_json()
     body: requestBody = json.loads(json_body)
-    if body.model is "w2v":
-        return (
-            jsonify(
-                {
-                    "query": sentence,
-                    "encoding": result,
-                }
-            ),
-            200,
-        )
+    result = w2v_transformer.get_feature_vectors(body.words, body.model)
+    return (jsonify(result), 200)

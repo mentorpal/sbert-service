@@ -4,4 +4,42 @@
 #
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
+from os import path
+from typing import Dict, List
+from gensim.models import KeyedVectors
+from gensim.models.keyedvectors import Word2VecKeyedVectors
+from numpy import ndarray
 
+WORD2VEC_MODELS: Dict[str, Word2VecKeyedVectors] = {}
+
+
+def find_or_load_word2vec(file_path: str) -> Word2VecKeyedVectors:
+    abs_path = path.abspath(file_path)
+    if abs_path not in WORD2VEC_MODELS:
+        WORD2VEC_MODELS[abs_path] = KeyedVectors.load_word2vec_format(
+            abs_path, binary=True
+        )
+    return WORD2VEC_MODELS[abs_path]
+
+
+def load_word2vec_model(path: str) -> Word2VecKeyedVectors:
+    return KeyedVectors.load_word2vec_format(path, binary=True)
+
+
+class Word2VecTransformer:
+    w2v_model: Word2VecKeyedVectors
+    w2v_slim_model: Word2VecKeyedVectors
+
+    def __init__(self, shared_root: str):
+        self.w2v_model = find_or_load_word2vec(path.abspath(path.join(shared_root, "word2vec.bin")))
+        self.w2v_slim_model = find_or_load_word2vec(path.abspath(path.join(shared_root, "word2vec_slim.bin")))
+
+    def get_feature_vectors(self, words: List[str], model: str) -> Dict[str, ndarray]:
+        result: Dict[str, ndarray] = dict()
+        for word in words:
+            if model is "word2vec":
+                if word in self.w2v_model:
+                    result[word] = self.w2v_model[word]
+            elif model is "word2vec_slim" and word in self.w2v_slim_model:
+                result[word] = self.w2v_slim_model[word]
+        return result
