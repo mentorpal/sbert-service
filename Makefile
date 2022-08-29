@@ -27,8 +27,8 @@ transformer.pkl: $(VENV) shared/installed sentence-transformers
 	poetry run python ./server/transformer/embeddings.py ./shared/installed
 
 word2vec.bin: shared/installed
-	cd shared && python word2vec_download.py
-	cd shared && python word2vec_slim_download.py
+	cd shared && poetry run python word2vec_download.py
+	cd shared && poetry run python word2vec_slim_download.py
 
 build/deploy:
 	# put everything we want in our beanstalk deploy.zip file
