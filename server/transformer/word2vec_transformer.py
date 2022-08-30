@@ -12,6 +12,9 @@ from numpy import ndarray
 
 WORD2VEC_MODELS: Dict[str, Word2VecKeyedVectors] = {}
 
+WORD2VEC_MODEL_NAME = "word2vec"
+WORD2VEC_SLIM_MODEL_NAME = "word2vec_slim"
+
 
 def find_or_load_word2vec(file_path: str) -> Word2VecKeyedVectors:
     abs_path = path.abspath(file_path)
@@ -37,9 +40,17 @@ class Word2VecTransformer:
     def get_feature_vectors(self, words: List[str], model: str) -> Dict[str, ndarray]:
         result: Dict[str, ndarray] = dict()
         for word in words:
-            if model is "word2vec":
+            if model is WORD2VEC_MODEL_NAME:
                 if word in self.w2v_model:
                     result[word] = self.w2v_model[word]
-            elif model is "word2vec_slim" and word in self.w2v_slim_model:
+            elif model is WORD2VEC_SLIM_MODEL_NAME and word in self.w2v_slim_model:
                 result[word] = self.w2v_slim_model[word]
         return result
+    
+    def get_index_to_key(self, model:str):
+        if model is WORD2VEC_MODEL_NAME:
+            return self.w2v_model.index_to_key
+        elif model is WORD2VEC_SLIM_MODEL_NAME:
+            return self.w2v_slim_model.index_to_key
+        else:
+            return None

@@ -15,6 +15,7 @@ from .blueprints.encode import encode_blueprint
 from .blueprints.ping import ping_blueprint
 from .blueprints.health import health_blueprint
 from .blueprints.paraphrase import paraphrase_blueprint
+from .blueprints.word2vec import w2v_blueprint
 
 
 def create_app():
@@ -33,6 +34,7 @@ def _setup_route_handlers(app):
     app.register_blueprint(ping_blueprint, url_prefix="/v1/ping")
     app.register_blueprint(encode_blueprint, url_prefix="/v1/encode")
     app.register_blueprint(paraphrase_blueprint, url_prefix="/v1/paraphrase")
+    app.register_blueprint(w2v_blueprint, url_prefix="/v1/w2v")
 
     @app.route("/v1/debug-sentry")
     def _error_handler_test():

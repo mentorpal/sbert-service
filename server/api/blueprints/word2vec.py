@@ -29,3 +29,12 @@ def encode():
     body: requestBody = json.loads(json_body)
     result = w2v_transformer.get_feature_vectors(body.words, body.model)
     return (jsonify(result), 200)
+
+@w2v_blueprint.route("index_to_key", methods=["GET", "POST"])
+@authenticate
+def index_to_key():
+    if "model" not in request.args:
+        return (jsonify({"model": ["required field"]}), 400)
+    model_name = request.args["model"].strip()
+    result = w2v_transformer.get_index_to_key(model_name)
+    return (jsonify(result), 200)
