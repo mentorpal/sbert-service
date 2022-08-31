@@ -13,7 +13,6 @@
 
 def test_returns_400_response_when_query_missing(client):
     res = client.get("/v1/encode/", headers={"Authorization": "bearer dummykey"})
-    print(res)
     assert res.status_code == 400
 
 
