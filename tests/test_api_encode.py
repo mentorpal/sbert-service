@@ -10,13 +10,15 @@
 #     monkeypatch.setenv("SHARED_ROOT", shared_root)
 
 
+
 def test_returns_400_response_when_query_missing(client):
-    res = client.get("/v1/encode/")
+    res = client.get("/v1/encode/", headers={"Authorization": "bearer dummykey"})
+    print(res)
     assert res.status_code == 400
 
 
 def test_hello_world(client):
-    res = client.get("/v1/encode?query=hello+world")
+    res = client.get("/v1/encode?query=hello+world",  headers={"Authorization": "bearer dummykey"})
     assert res.status_code == 200
     assert res.json["query"] == "hello world"
     assert len(res.json["encoding"]) > 20

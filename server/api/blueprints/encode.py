@@ -12,6 +12,7 @@ from .auth_decorator import authenticate
 encode_blueprint = Blueprint("encode", __name__)
 
 
+@encode_blueprint.route("/", methods=["GET", "POST"])
 @encode_blueprint.route("", methods=["GET", "POST"])
 @authenticate
 def encode():
