@@ -34,23 +34,27 @@ class Word2VecTransformer:
     w2v_slim_model: Word2VecKeyedVectors
 
     def __init__(self, shared_root: str):
-        self.w2v_model = find_or_load_word2vec(path.abspath(path.join(shared_root, "word2vec.bin")))
-        self.w2v_slim_model = find_or_load_word2vec(path.abspath(path.join(shared_root, "word2vec_slim.bin")))
+        self.w2v_model = find_or_load_word2vec(
+            path.abspath(path.join(shared_root, "word2vec.bin"))
+        )
+        self.w2v_slim_model = find_or_load_word2vec(
+            path.abspath(path.join(shared_root, "word2vec_slim.bin"))
+        )
 
     def get_feature_vectors(self, words: List[str], model: str) -> Dict[str, ndarray]:
         result: Dict[str, ndarray] = dict()
         for word in words:
-            if model is WORD2VEC_MODEL_NAME:
+            if model == WORD2VEC_MODEL_NAME:
                 if word in self.w2v_model:
-                    result[word] = self.w2v_model[word]
-            elif model is WORD2VEC_SLIM_MODEL_NAME and word in self.w2v_slim_model:
-                result[word] = self.w2v_slim_model[word]
+                    result[word] = self.w2v_model[word].tolist()
+            elif model == WORD2VEC_SLIM_MODEL_NAME and word in self.w2v_slim_model:
+                result[word] = self.w2v_slim_model[word].tolist()
         return result
-    
-    def get_index_to_key(self, model:str):
-        if model is WORD2VEC_MODEL_NAME:
+
+    def get_index_to_key(self, model: str):
+        if model == WORD2VEC_MODEL_NAME:
             return self.w2v_model.index_to_key
-        elif model is WORD2VEC_SLIM_MODEL_NAME:
+        elif model == WORD2VEC_SLIM_MODEL_NAME:
             return self.w2v_slim_model.index_to_key
         else:
             return None

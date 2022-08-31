@@ -4,19 +4,20 @@
 #
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
-#
-import os
-import requests
+
+# @pytest.fixture(autouse=True)
+# def python_path_env(monkeypatch, shared_root):
+#     monkeypatch.setenv("SHARED_ROOT", shared_root)
 
 
-def download(url: str, to_path: str):
-    print("downloading")
-    print(f"\tfrom {url}")
-    print(f"\tto {to_path}")
-    r = requests.get(url, stream=True)
-    block_size = 1024
-    os.makedirs(os.path.dirname(to_path), exist_ok=True)
-    with open(to_path, "wb") as f:
-        for chunk in r.iter_content(chunk_size=block_size):
-            if chunk:
-                f.write(chunk)
+def test_returns_400_response_when_query_missing(client):
+    res = client.post("/v1/w2v/", headers={"Authorization": "bearer dummykey"})
+    assert res.status_code == 400
+
+
+def test_hello_world(client):
+    res = client.post(
+        "/v1/w2v?words=hello+world&model=word2vec",
+        headers={"Authorization": "bearer dummykey"},
+    )
+    assert res.status_code == 200

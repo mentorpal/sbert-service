@@ -19,7 +19,6 @@ def authenticate(f):
     @wraps(f)
     def protected_endpoint(*args, **kws):
         bearer_token = request.headers.get("Authorization", "")
-        print(bearer_token)
         token_authentication = bearer_token.lower().startswith("bearer")
         token_split = bearer_token.split(" ")
         if not token_authentication or len(token_split) == 1:

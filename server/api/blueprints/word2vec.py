@@ -4,32 +4,29 @@
 #
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
-from dataclasses import dataclass
-import json
-from typing import List
 from flask import Blueprint, jsonify, request
 
-from server.transformer import word2vec_transformer
 from . import w2v_transformer
 from .auth_decorator import authenticate
 
 w2v_blueprint = Blueprint("w2v", __name__)
 
-@dataclass
-class requestBody:
-    words: List[str]
-    model: str
 
+@w2v_blueprint.route("/", methods=["GET", "POST"])
 @w2v_blueprint.route("", methods=["GET", "POST"])
 @authenticate
 def encode():
-    if not request.is_json:
-        return (jsonify({"error": "missing json body"}), 400) 
-    json_body = request.get_json()
-    body: requestBody = json.loads(json_body)
-    result = w2v_transformer.get_feature_vectors(body.words, body.model)
+    if "words" not in request.args:
+        return (jsonify({"words": ["required field"]}), 400)
+    if "model" not in request.args:
+        return (jsonify({"model": ["required field"]}), 400)
+    words = request.args["words"].strip().split(" ")
+    model = request.args["model"].strip()
+    result = w2v_transformer.get_feature_vectors(words, model)
     return (jsonify(result), 200)
 
+
+@w2v_blueprint.route("/index_to_key", methods=["GET", "POST"])
 @w2v_blueprint.route("index_to_key", methods=["GET", "POST"])
 @authenticate
 def index_to_key():
