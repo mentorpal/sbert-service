@@ -10,14 +10,33 @@
 #     monkeypatch.setenv("SHARED_ROOT", shared_root)
 
 
+import pytest
+
+
 def test_returns_400_response_when_query_missing(client):
     res = client.post("/v1/w2v/", headers={"Authorization": "bearer dummykey"})
     assert res.status_code == 400
 
 
-def test_hello_world(client):
+@pytest.mark.parametrize(
+    "model",
+    [("word2vec"), ("word2vec_slim")],
+)
+def test_hello_world(model: str, client):
     res = client.post(
-        "/v1/w2v?words=hello+world&model=word2vec",
+        f"/v1/w2v?words=hello+world&model={model}",
+        headers={"Authorization": "bearer dummykey"},
+    )
+    assert res.status_code == 200
+
+
+@pytest.mark.parametrize(
+    "model",
+    [("word2vec"), ("word2vec_slim")],
+)
+def test_index_to_key(model: str, client):
+    res = client.post(
+        f"/v1/w2v/index_to_key?model={model}",
         headers={"Authorization": "bearer dummykey"},
     )
     assert res.status_code == 200
