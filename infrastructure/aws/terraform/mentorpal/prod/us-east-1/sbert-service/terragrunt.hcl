@@ -11,6 +11,7 @@ locals {
   cloudwatch_slack_webhook = local.secret_vars.locals.cloudwatch_slack_webhook
   sentry_dsn_sbert         = local.secret_vars.locals.sentry_dsn_sbert
   api_secret_key           = local.secret_vars.locals.api_secret_key
+  prod_secret_jwt_key      = local.secret_vars.locals.prod_secret_jwt_key
 }
 
 terraform {
@@ -57,6 +58,7 @@ inputs = {
     SENTRY_DSN_MENTOR_SBERT_SERVICE = local.sentry_dsn_sbert,
     LOG_LEVEL_SBERT_SERVICE         = "INFO",
     API_SECRET_KEY                  = local.api_secret_key
+    PROD_SECRET_JWT_KEY = local.prod_secret_jwt_key
   }
 
   # logging:
