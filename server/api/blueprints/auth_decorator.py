@@ -8,9 +8,14 @@ from functools import wraps
 from flask import request, abort
 from os import environ
 import logging
+import jwt
 
 log = logging.getLogger()
 api_keys = set(environ.get("API_SECRET_KEY").split(","))
+dev_jwt_secret = environ.get("DEV_SECRET_JWT_KEY")
+qa_jwt_secret = environ.get("QA_SECRET_JWT_KEY")
+prod_jwt_secret = environ.get("PROD_SECRET_JWT_KEY")
+stage = environ.get("STAGE")
 
 
 def authenticate(f):
@@ -26,8 +31,21 @@ def authenticate(f):
             abort(401, "no authentication token provided")
         token = token_split[1]
         if token not in api_keys:
-            log.debug("invalid access token")
-            abort(401, "invalid access token")
+            # token not an API key, check if it is a valid JWT access token
+            if stage == "stage":  # QA is called stage
+                # Currently stage is for both dev and qa stages
+                try:
+                    jwt.decode(token, dev_jwt_secret, algorithms=["HS256"])
+                except jwt.ExpiredSignatureError:
+                    try:
+                        jwt.decode(token, qa_jwt_secret, algorithms=["HS256"])
+                    except jwt.ExpiredSignatureError:
+                        abort(401, "JWT token expired or incorrect jwt secret")
+            elif stage == "prod":
+                try:
+                    jwt.decode(token, prod_jwt_secret, algorithms=["HS256"])
+                except jwt.ExpiredSignatureError:
+                    abort(401, "JWT token expired or incorrect jwt secret")
         return f(*args, **kws)
 
     return protected_endpoint
