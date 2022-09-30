@@ -12,6 +12,7 @@ from .auth_decorator import authenticate
 encode_blueprint = Blueprint("encode", __name__)
 
 
+@encode_blueprint.route("/", methods=["GET", "POST"])
 @encode_blueprint.route("", methods=["GET", "POST"])
 @authenticate
 def encode():
@@ -24,6 +25,38 @@ def encode():
             {
                 "query": sentence,
                 "encoding": result,
+            }
+        ),
+        200,
+    )
+
+
+@encode_blueprint.route("/multiple_encode/", methods=["GET", "POST"])
+@encode_blueprint.route("/multiple_encode", methods=["GET", "POST"])
+@authenticate
+def multiple_encode():
+    if not request.content_type.lower().startswith("application/json"):
+        return (jsonify({"error": ["invalid content type, only json accepted"]}), 400)
+    logging.info(request.data)
+    if "sentences" not in request.json:
+        return (jsonify({"sentences": ["required field"]}), 400)
+
+    sentences = request.json["sentences"]
+    result = list(
+        map(
+            lambda sentence: {
+                "original": sentence,
+                "encoded": encoder.encode(sentence),
+            },
+            sentences,
+        )
+    )
+    logging.info("input length: %s, results: %s", len(sentences), len(result))
+
+    return (
+        jsonify(
+            {
+                "results": result,
             }
         ),
         200,
