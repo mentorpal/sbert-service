@@ -4,15 +4,39 @@
 #
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
-import os
-from server.transformer.encode import TransformersEncoder
-from server.transformer.word2vec_transformer import Word2VecTransformer
+
+# @pytest.fixture(autouse=True)
+# def python_path_env(monkeypatch, shared_root):
+#     monkeypatch.setenv("SHARED_ROOT", shared_root)
 
 
-shared_root = os.environ.get("SHARED_ROOT", "shared")
-if not os.path.isdir(shared_root):
-    raise Exception("Shared missing.")
+import pytest
 
-# load on init so request handler is fast on first hit
-encoder: TransformersEncoder = TransformersEncoder(shared_root)
-w2v_transformer: Word2VecTransformer = Word2VecTransformer(shared_root)
+
+def test_returns_400_response_when_query_missing(client):
+    res = client.post("/v1/w2v/", headers={"Authorization": "bearer dummykey"})
+    assert res.status_code == 400
+
+
+@pytest.mark.parametrize(
+    "model",
+    [("word2vec"), ("word2vec_slim")],
+)
+def test_hello_world(model: str, client):
+    res = client.post(
+        f"/v1/w2v?words=hello+world&model={model}",
+        headers={"Authorization": "bearer dummykey"},
+    )
+    assert res.status_code == 200
+
+
+@pytest.mark.parametrize(
+    "model",
+    [("word2vec"), ("word2vec_slim")],
+)
+def test_index_to_key(model: str, client):
+    res = client.post(
+        f"/v1/w2v/index_to_key?model={model}",
+        headers={"Authorization": "bearer dummykey"},
+    )
+    assert res.status_code == 200

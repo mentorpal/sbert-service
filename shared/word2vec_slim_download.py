@@ -5,14 +5,27 @@
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
 import os
-from server.transformer.encode import TransformersEncoder
-from server.transformer.word2vec_transformer import Word2VecTransformer
+import shutil
+from zipfile import ZipFile
+
+from utils import download
 
 
-shared_root = os.environ.get("SHARED_ROOT", "shared")
-if not os.path.isdir(shared_root):
-    raise Exception("Shared missing.")
+def word2vec_download(to_path="installed", replace_existing=False) -> str:
+    word2vec_path = os.path.abspath(os.path.join(to_path, "word2vec_slim.bin"))
+    if os.path.isfile(word2vec_path) and not replace_existing:
+        print(f"already is a file! {word2vec_path}")
+        return word2vec_path
+    word2vec_zip = os.path.join(to_path, "word2vec_slim.zip")
+    download(
+        "https://aws-classifier-model.s3.amazonaws.com/word2vec_slim.zip", word2vec_zip
+    )
+    with ZipFile(word2vec_zip, "r") as z:
+        z.extract("model.bin")
+    shutil.move("model.bin", word2vec_path)
+    os.remove(word2vec_zip)
+    return word2vec_path
 
-# load on init so request handler is fast on first hit
-encoder: TransformersEncoder = TransformersEncoder(shared_root)
-w2v_transformer: Word2VecTransformer = Word2VecTransformer(shared_root)
+
+if __name__ == "__main__":
+    word2vec_download()
