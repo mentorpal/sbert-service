@@ -14,7 +14,6 @@ import jwt
 log = logging.getLogger()
 api_keys = set(environ.get("API_SECRET_KEY").split(","))
 jwt_secret = set(environ.get("JWT_SECRET_KEY").split(","))
-stage = environ.get("STAGE")
 
 
 def authenticate(f):
