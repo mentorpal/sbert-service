@@ -13,9 +13,7 @@ import jwt
 
 log = logging.getLogger()
 api_keys = set(environ.get("API_SECRET_KEY").split(","))
-dev_jwt_secret = environ.get("DEV_SECRET_JWT_KEY")
-qa_jwt_secret = environ.get("QA_SECRET_JWT_KEY")
-prod_jwt_secret = environ.get("PROD_SECRET_JWT_KEY")
+jwt_secret = set(environ.get("JWT_SECRET_KEY").split(","))
 stage = environ.get("STAGE")
 
 
@@ -33,20 +31,15 @@ def authenticate(f):
         token = token_split[1]
         if token not in api_keys:
             # token not an API key, check if it is a valid JWT access token
-            if stage == "stage":  # QA is called stage
-                # Currently stage is for both dev and qa stages
+            jwt_approved = False
+            for secret in jwt_secret:
                 try:
-                    jwt.decode(token, dev_jwt_secret, algorithms=["HS256"])
-                except jwt.ExpiredSignatureError:
-                    try:
-                        jwt.decode(token, qa_jwt_secret, algorithms=["HS256"])
-                    except jwt.ExpiredSignatureError:
-                        abort(401, "JWT token expired or incorrect jwt secret")
-            elif stage == "prod":
-                try:
-                    jwt.decode(token, prod_jwt_secret, algorithms=["HS256"])
-                except jwt.ExpiredSignatureError:
-                    abort(401, "JWT token expired or incorrect jwt secret")
+                    jwt.decode(token, secret, algorithms=["HS256"])
+                    jwt_approved = True
+                except:
+                    pass
+            if not jwt_approved:
+                abort(400, "Failed to decode JWT")
         return f(*args, **kws)
 
     return protected_endpoint
