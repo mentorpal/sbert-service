@@ -35,7 +35,7 @@ def authenticate(f):
                 try:
                     jwt.decode(token, secret, algorithms=["HS256"])
                     jwt_approved = True
-                except:
+                except Exception:
                     pass
             if not jwt_approved:
                 abort(400, "Failed to decode JWT")

@@ -26,7 +26,9 @@ def test_hello_world(client):
 
 def test_multiple_encode(client):
     res = client.get(
-        "/v1/encode/multiple_encode/", json={"sentences": ["hello", "world"]}
+        "/v1/encode/multiple_encode/",
+        json={"sentences": ["hello", "world"]},
+        headers={"Authorization": "bearer dummykey"},
     )
     assert res.status_code == 200
     results = res.json["results"]
