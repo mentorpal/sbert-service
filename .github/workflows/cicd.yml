@@ -25,6 +25,7 @@ jobs:
         run: |
           curl -sSL https://install.python-poetry.org | python -
           echo "$HOME/.poetry/bin" >> $GITHUB_PATH
+          poetry --version
       - name: test format
         run: make test-format
       - name: test lint
@@ -97,7 +98,8 @@ jobs:
       - name: poetry install
         run: |
           curl -sSL https://install.python-poetry.org | python -
-          echo "$HOME/.poetry/bin" >> $GITHUB_PATH        
+          echo "$HOME/.poetry/bin" >> $GITHUB_PATH
+          poetry --version
       - name: docker build
         run: DOCKER_IMAGE=mentorpal/sbert-service:${{ steps.tag.outputs.image_tag }} make docker-build
       - name: docker tag release as version
