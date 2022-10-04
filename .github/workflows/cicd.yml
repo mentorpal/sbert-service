@@ -41,7 +41,7 @@ jobs:
       - test
     runs-on: ubuntu-latest
     outputs:
-      is_release_tag: ${{ steps.is_release.outputs.is_release_tag }}    
+      is_release_tag: ${{ steps.is_release_tag.outputs.is_release_tag }}    
       is_build_disabled: ${{ steps.is_build_disabled.outputs.is_build_disabled }}
       is_deploy_disabled: ${{ steps.is_deploy_disabled.outputs.is_deploy_disabled }}
     steps:
