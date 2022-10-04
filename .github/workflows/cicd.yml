@@ -48,6 +48,7 @@ jobs:
       - id: is_release_tag
         run: |
           if [[ ${{ github.event.ref }} =~ ^refs/tags/[0-9]+\.[0-9]+\.[0-9]+(-[a-z0-9.]*)?$ ]]; then
+              echo "This is a release tag"
               echo ::set-output name=is_release_tag::true
           fi
       - id: is_build_disabled
