@@ -86,6 +86,8 @@ jobs:
       - workflow-check
       - test
     if: true && !needs.workflow-check.outputs.is_build_disabled
+    outputs:
+      image_tag: ${{ steps.tag.outputs.image_tag }}  
     steps:
       - uses: actions/checkout@v2
         with:
