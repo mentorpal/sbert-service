@@ -1,3 +1,4 @@
+DOCKER_IMAGE?=sbert_service
 LICENSE=LICENSE
 LICENSE_HEADER=LICENSE_HEADER
 VENV=.venv
@@ -11,7 +12,7 @@ install: poetry-ensure-installed
 	poetry install
 
 .PHONY docker-build:
-docker-build: sentence-transformers transformer.pkl
+docker-build: sentence-transformers transformer.pkl word2vec.bin
 # squash reduces final image size by merging layers `--squash`
 # but its not supported in github actions
 	docker build -t $(DOCKER_IMAGE) .
@@ -25,6 +26,10 @@ sentence-transformers: shared/installed
 
 transformer.pkl: $(VENV) shared/installed sentence-transformers
 	poetry run python ./server/transformer/embeddings.py ./shared/installed
+
+word2vec.bin: shared/installed
+	cd shared && poetry run python word2vec_download.py
+	cd shared && poetry run python word2vec_slim_download.py
 
 build/deploy:
 	# put everything we want in our beanstalk deploy.zip file
@@ -72,14 +77,11 @@ license: LICENSE LICENSE_HEADER $(VENV)
 .PHONY: poetry-ensure-installed
 poetry-ensure-installed:
 	./tools/poetry_ensure_installed.sh
-	. $(HOME)/.poetry/env
 
 .PHONY: test
 test: $(VENV)
 	cd ./shared/ && $(MAKE) installed/sentence-transformer
-	SHARED_ROOT=./shared/installed poetry run coverage run \
-		--omit="$(PWD)/tests $(VENV)" \
-		-m py.test -vv $(args)
+	SHARED_ROOT=./shared/installed poetry run python -m py.test -vv
 
 .PHONY: black
 black: $(VENV)

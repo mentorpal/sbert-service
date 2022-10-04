@@ -11,12 +11,28 @@
 
 
 def test_returns_400_response_when_query_missing(client):
-    res = client.get("/v1/encode/")
+    res = client.get("/v1/encode/", headers={"Authorization": "bearer dummykey"})
     assert res.status_code == 400
 
 
 def test_hello_world(client):
-    res = client.get("/v1/encode?query=hello+world")
+    res = client.get(
+        "/v1/encode?query=hello+world", headers={"Authorization": "bearer dummykey"}
+    )
     assert res.status_code == 200
     assert res.json["query"] == "hello world"
     assert len(res.json["encoding"]) > 20
+
+
+def test_multiple_encode(client):
+    res = client.get(
+        "/v1/encode/multiple_encode/",
+        json={"sentences": ["hello", "world"]},
+        headers={"Authorization": "bearer dummykey"},
+    )
+    assert res.status_code == 200
+    results = res.json["results"]
+    assert len(results[0]["encoded"]) > 20
+    assert results[0]["original"] == "hello"
+    assert len(results[1]["encoded"]) > 20
+    assert results[1]["original"] == "world"

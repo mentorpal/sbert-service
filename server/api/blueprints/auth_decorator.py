@@ -8,9 +8,12 @@ from functools import wraps
 from flask import request, abort
 from os import environ
 import logging
+import jwt
+
 
 log = logging.getLogger()
-api_keys = set(environ.get("API_SECRET_KEY").split(","))
+api_keys = set(environ.get("API_SECRET_KEY", "dummy key,dummykey").split(","))
+jwt_secret = set(environ.get("JWT_SECRET_KEY", "dummy key,dummykey").split(","))
 
 
 def authenticate(f):
@@ -26,8 +29,16 @@ def authenticate(f):
             abort(401, "no authentication token provided")
         token = token_split[1]
         if token not in api_keys:
-            log.debug("invalid access token")
-            abort(401, "invalid access token")
+            # token not an API key, check if it is a valid JWT access token
+            jwt_approved = False
+            for secret in jwt_secret:
+                try:
+                    jwt.decode(token, secret, algorithms=["HS256"])
+                    jwt_approved = True
+                except Exception:
+                    pass
+            if not jwt_approved:
+                abort(400, "Failed to decode JWT")
         return f(*args, **kws)
 
     return protected_endpoint
