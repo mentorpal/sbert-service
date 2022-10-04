@@ -130,7 +130,7 @@ jobs:
         lfs: true
     - name: Create deploy.zip
       env:
-        TAG: mentorpal/sbert-service:${{ steps.tag.outputs.image_tag }}
+        TAG: mentorpal/sbert-service:${{ needs.workflow-check.outputs.image_tag }}
       run: |
         sed -i -e "s|@TAG|$TAG|g" ebs/bundle/Dockerrun.aws.json
         cat ebs/bundle/Dockerrun.aws.json
