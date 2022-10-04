@@ -3,7 +3,7 @@
   "containerDefinitions": [
     {
       "name": "sbert-service",
-      "image": "mentorpal/sbert_service:@TAG",
+      "image": "mentorpal/sbert-service:@TAG",
       "essential": true,
       "memory": 3600,
       "portMappings": [

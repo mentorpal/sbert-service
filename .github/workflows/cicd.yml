@@ -106,17 +106,17 @@ jobs:
           echo "$HOME/.poetry/bin" >> $GITHUB_PATH
           poetry --version
       - name: docker build
-        run: DOCKER_IMAGE=mentorpal/sbert_service:${{ steps.tag.outputs.image_tag }} make docker-build
+        run: DOCKER_IMAGE=mentorpal/sbert-service:${{ steps.tag.outputs.image_tag }} make docker-build
       - name: docker tag release as version
         if: needs.publish-check.outputs.is_release_tag == 'true'
         run: |
-          docker tag "mentorpal/sbert_service:${{ steps.tag.outputs.image_tag }}" "mentorpal/sbert_service:${GITHUB_REF#refs/tags/}"
+          docker tag "mentorpal/sbert-service:${{ steps.tag.outputs.image_tag }}" "mentorpal/sbert-service:${GITHUB_REF#refs/tags/}"
       - name: docker tag main as latest
         if: github.ref == 'refs/heads/main'
         run: |
-          docker tag "mentorpal/sbert_service:${{ steps.tag.outputs.image_tag }}" "mentorpal/sbert_service:latest"
+          docker tag "mentorpal/sbert-service:${{ steps.tag.outputs.image_tag }}" "mentorpal/sbert-service:latest"
       - name: docker push
-        run: docker push --all-tags mentorpal/sbert_service
+        run: docker push --all-tags mentorpal/sbert-service
 
   deploy:
     runs-on: ubuntu-latest
