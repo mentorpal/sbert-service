@@ -10,7 +10,7 @@ from os import environ
 import logging
 
 log = logging.getLogger()
-api_keys = set(environ.get("API_SECRET_KEY").split(","))
+api_keys = set(environ.get("API_SECRET_KEY", "dummy").split(","))
 
 
 def authenticate(f):

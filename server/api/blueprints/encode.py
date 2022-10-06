@@ -11,9 +11,9 @@ from .auth_decorator import authenticate
 
 encode_blueprint = Blueprint("encode", __name__)
 
-
+@encode_blueprint.route("/", methods=["GET", "POST"])
 @encode_blueprint.route("", methods=["GET", "POST"])
-@authenticate
+# @authenticate
 def encode():
     if "query" not in request.args:
         return (jsonify({"query": ["required field"]}), 400)
@@ -31,7 +31,7 @@ def encode():
 
 
 @encode_blueprint.route("cos_sim_weight", methods=["POST"])
-@authenticate
+# @authenticate
 def cos_sim_weight():
     """
     Computes the cosine similarity cos_sim(a[i], b[j]) for all i and j.
