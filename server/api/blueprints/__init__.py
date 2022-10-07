@@ -6,7 +6,6 @@
 #
 import os
 from server.transformer.encode import TransformersEncoder
-from server.transformer.word2vec_transformer import Word2VecTransformer
 
 
 shared_root = os.environ.get("SHARED_ROOT", "shared")
@@ -15,4 +14,3 @@ if not os.path.isdir(shared_root):
 
 # load on init so request handler is fast on first hit
 encoder: TransformersEncoder = TransformersEncoder(shared_root)
-w2v_transformer: Word2VecTransformer = Word2VecTransformer(shared_root)
