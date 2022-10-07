@@ -19,7 +19,7 @@ from .blueprints.paraphrase import paraphrase_blueprint
 
 def create_app():
     _setup_sentry()
-    # _setup_logging()
+    _setup_logging()
     app = Flask(__name__)
     CORS(app)
     _setup_error_handlers(app)
