@@ -56,7 +56,7 @@ def multiple_encode():
     return (
         jsonify(
             {
-                "results": result,
+                "data": result,
             }
         ),
         200,
