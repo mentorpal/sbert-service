@@ -31,7 +31,7 @@ def test_multiple_encode(client):
         headers={"Authorization": "bearer dummykey"},
     )
     assert res.status_code == 200
-    results = res.json["results"]
+    results = res.json["data"]
     assert len(results[0]["encoded"]) > 20
     assert results[0]["original"] == "hello"
     assert len(results[1]["encoded"]) > 20
