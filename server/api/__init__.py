@@ -88,7 +88,7 @@ def _setup_sentry():
 
                 # Set traces_sample_rate to 1.0 to capture 100%
                 # of transactions for performance monitoring.
-                return 0.2
+                return 0.001
 
         logging.info("SENTRY enabled, calling init")
         sentry_sdk.init(
