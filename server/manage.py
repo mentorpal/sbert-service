@@ -22,7 +22,9 @@ except Exception as x:
 
 @app.before_request
 def before_request():
-    log.info("%s", request.full_path)
+    if request.blueprint != "ping":
+        # do not log pings
+        log.info("%s", request.full_path)
     g.start = time.time_ns()
 
 
