@@ -35,7 +35,7 @@ variable "eb_env_additional_settings" {
     {
       namespace = "aws:elasticbeanstalk:environment:process:default"
       name      = "HealthCheckPath"
-      value     = "/v1/ping"
+      value     = "/v1/ping/"
     },
     {
       namespace = "aws:elasticbeanstalk:managedactions"
