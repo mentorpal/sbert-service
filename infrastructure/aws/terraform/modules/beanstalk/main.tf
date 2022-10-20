@@ -183,6 +183,22 @@ resource "aws_cloudfront_origin_request_policy" "cdn_origin_policy" {
   }
 }
 
+module "cdn_firewall" {
+  source     = "git::https://github.com/mentorpal/terraform-modules//modules/api-waf?ref=tags/v1.6.8"
+  name       = "${var.eb_env_name}-cdn-${var.eb_env_stage}"
+  scope      = "CLOUDFRONT"
+  rate_limit = 1000
+
+  # cloudfront waf must be in N.Virginia
+  aws_region = "us-east-1"
+  providers = {
+    aws = aws.us-east-1
+  }
+
+  disable_bot_protection_for_amazon_ips = true 
+  enable_logging = false
+  tags           = var.eb_env_tags
+}
 
 module "cdn" {
   source                   = "git::https://github.com/cloudposse/terraform-aws-cloudfront-cdn.git?ref=tags/0.24.1"
@@ -208,6 +224,7 @@ module "cdn" {
   # logging config, disable because we have from the service itself
   logging_enabled     = false
   log_expiration_days = 30
+  web_acl_id               = module.cdn_firewall.wafv2_webacl_arn
 }
 
 
