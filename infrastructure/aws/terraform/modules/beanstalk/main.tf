@@ -184,7 +184,7 @@ resource "aws_cloudfront_origin_request_policy" "cdn_origin_policy" {
 }
 
 module "cdn_firewall" {
-  source     = "git::https://github.com/mentorpal/terraform-modules//modules/api-waf?ref=tags/v1.6.0"
+  source     = "git::https://github.com/mentorpal/terraform-modules//modules/api-waf?ref=tags/v1.6.8"
   name       = "${var.eb_env_name}-cdn-${var.eb_env_stage}"
   scope      = "CLOUDFRONT"
   rate_limit = 1000
