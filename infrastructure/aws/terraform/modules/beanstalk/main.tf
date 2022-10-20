@@ -210,6 +210,24 @@ module "cdn" {
   log_expiration_days = 30
 }
 
+module "cdn_firewall" {
+  source     = "git::https://github.com/mentorpal/terraform-modules//modules/api-waf?ref=tags/v1.6.0"
+  name       = "${var.eb_env_name}-cdn-${var.eb_env_stage}"
+  scope      = "CLOUDFRONT"
+  rate_limit = 1000
+
+
+  # cloudfront waf must be in N.Virginia
+  aws_region = "us-east-1"
+  providers = {
+    aws = aws.us-east-1
+  }
+
+  disable_bot_protection_for_amazon_ips = true 
+  enable_logging = true
+  tags           = var.eb_env_tags
+}
+
 
 ######
 # Cloudwatch alarms
