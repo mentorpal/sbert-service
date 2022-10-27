@@ -184,12 +184,13 @@ resource "aws_cloudfront_origin_request_policy" "cdn_origin_policy" {
 }
 
 module "lb_firewall" {
-  source     = "git::https://github.com/mentorpal/terraform-modules//modules/api-waf?ref=tags/v1.6.8"
+  source     = "git::https://github.com/mentorpal/terraform-modules//modules/api-waf?ref=tags/v1.6.9"
   name       = "${var.eb_env_name}-cdn-${var.eb_env_stage}"
   scope      = "REGIONAL"
   rate_limit = 1000
 
   aws_region = var.aws_region
+  allowed_uri_regex_set = ["^/v1/.*"]
 
   disable_bot_protection_for_amazon_ips = true 
   enable_logging = false
@@ -198,7 +199,7 @@ module "lb_firewall" {
 
 resource "aws_wafv2_web_acl_association" "web_acl_association_my_lb" {
   # Application Load balancer created by EBS (does not work with Classic Elastic Load Balancer)
-  resource_arn = regex(".+loadbalancer/(.*)$", module.elastic_beanstalk_environment.load_balancers[0])[0]
+  resource_arn = module.elastic_beanstalk_environment.load_balancers[0]
   # Firewall created specifically for this 
   web_acl_arn  = module.lb_firewall.wafv2_webacl_arn
 }
