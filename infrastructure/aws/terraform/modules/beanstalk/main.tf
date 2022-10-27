@@ -189,10 +189,7 @@ module "lb_firewall" {
   scope      = "REGIONAL"
   rate_limit = 1000
 
-  aws_region = "us-east-1"
-  providers = {
-    aws = aws.us-east-1
-  }
+  aws_region = var.aws_region
 
   disable_bot_protection_for_amazon_ips = true 
   enable_logging = false
