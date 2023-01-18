@@ -312,6 +312,16 @@ variable "cloudwatch_slack_webhook" {
   default     = ""
 }
 
+variable "secret_header_name" {
+  type        = string
+  default     = ""
+}
+
+variable "secret_header_value" {
+  type        = string
+  default     = ""
+}
+
 variable "slack_channel" {
   type        = string
   description = "Where to send notifications (needs to be created manually)"
