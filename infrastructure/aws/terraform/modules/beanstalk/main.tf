@@ -184,7 +184,7 @@ resource "aws_cloudfront_origin_request_policy" "cdn_origin_policy" {
 }
 
 module "lb_firewall" {
-  source     = "git::https://github.com/mentorpal/terraform-modules//modules/api-waf?ref=tags/v1.6.113"
+  source     = "git::https://github.com/mentorpal/terraform-modules//modules/api-waf?ref=tags/v1.6.114"
   name       = "${var.eb_env_name}-cdn-${var.eb_env_stage}"
   scope      = "REGIONAL"
   rate_limit = 1000
@@ -195,7 +195,7 @@ module "lb_firewall" {
   aws_region = var.aws_region
   allowed_uri_regex_set = ["^/v1/.*"]
 
-  enable_ip_and_origin_whitelisting = true 
+  enable_ip_and_origin_whitelisting = false 
   enable_logging = false
   tags           = var.eb_env_tags
 }
