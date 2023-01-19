@@ -322,6 +322,11 @@ variable "secret_header_value" {
   default     = ""
 }
 
+variable "allowed_origin" {
+  type        = string
+  default     = ""
+}
+
 variable "slack_channel" {
   type        = string
   description = "Where to send notifications (needs to be created manually)"

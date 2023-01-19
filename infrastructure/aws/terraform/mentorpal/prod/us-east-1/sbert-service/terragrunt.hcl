@@ -14,6 +14,7 @@ locals {
   jwt_secret_key           = local.secret_vars.locals.jwt_secret_key
   secret_header_name       = local.secret_vars.locals.secret_header_name
   secret_header_value      = local.secret_vars.locals.secret_header_value
+  allowed_origin           = local.secret_vars.locals.allowed_origin
 }
 
 terraform {
@@ -43,6 +44,7 @@ inputs = {
   cloudwatch_slack_webhook   = local.cloudwatch_slack_webhook
   secret_header_name         = local.secret_header_name
   secret_header_value        = local.secret_header_value
+  allowed_origin             = local.allowed_origin
 
   # scaling:
   eb_env_autoscale_min = 1 # ~23req/sec with c6i.large
