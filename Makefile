@@ -77,7 +77,7 @@ poetry-ensure-installed:
 .PHONY: test
 test: $(VENV)
 	cd ./shared/ && $(MAKE) installed/sentence-transformer
-	SHARED_ROOT=./shared/installed poetry run python -m py.test -vv
+	SHARED_ROOT=./shared/installed poetry run python -m pytest -vv
 
 .PHONY: black
 black: $(VENV)
