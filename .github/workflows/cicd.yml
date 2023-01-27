@@ -25,7 +25,7 @@ jobs:
 
       - name: poetry install
         run: |
-          curl -sSL https://install.python-poetry.org | POETRY_VERSION=1.2.2 python -
+          curl -sSL https://install.python-poetry.org | python - --version=1.2.2
           echo "$HOME/.poetry/bin" >> $GITHUB_PATH
           poetry --version
       - name: test format
@@ -102,7 +102,7 @@ jobs:
         run: docker login -u ${{ secrets.DOCKER_LOGIN }} -p ${{ secrets.DOCKER_PASSWORD }}
       - name: poetry install
         run: |
-          curl -sSL https://install.python-poetry.org | python -
+          curl -sSL https://install.python-poetry.org | python - --version=1.2.2
           echo "$HOME/.poetry/bin" >> $GITHUB_PATH
           poetry --version
       - name: docker build

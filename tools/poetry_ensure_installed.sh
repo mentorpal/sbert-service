@@ -23,6 +23,6 @@ if ! [ -x "$(command -v poetry)" ]; then
         echo "https://python-poetry.org/docs/"
         exit 1
     fi
-    curl -sSL https://install.python-poetry.org | POETRY_VERSION=1.2.2 python -
+    curl -sSL https://install.python-poetry.org | python - --=version=1.2.2
     . $HOME/.poetry/env
 fi
