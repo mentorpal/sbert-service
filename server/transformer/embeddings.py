@@ -31,11 +31,11 @@ def find_or_load_sentence_transformer(file_path: str) -> SentenceTransformer:
         )
     model = SENTENCE_TRANSFORMER_MODELS[abs_path]
     quantized = torch.quantization.quantize_dynamic(
-        model, 
+        model,
         {
             torch.nn.Embedding: torch.quantization.qconfig.float_qparams_weight_only_qconfig
         },
-        dtype=torch.qint8
+        dtype=torch.qint8,
     )
     return quantized
 
