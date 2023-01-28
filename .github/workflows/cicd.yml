@@ -9,7 +9,7 @@ on:
 jobs:
   test:
     name: test
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
         with:
@@ -25,7 +25,7 @@ jobs:
 
       - name: poetry install
         run: |
-          curl -sSL https://install.python-poetry.org | python - --version=1.2.2
+          curl -sSL https://install.python-poetry.org | python -
           echo "$HOME/.poetry/bin" >> $GITHUB_PATH
           poetry --version
       - name: test format
@@ -39,7 +39,7 @@ jobs:
     name: workflow check
     needs:
       - test
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     outputs:
       is_release_tag: ${{ steps.is_release_tag.outputs.is_release_tag }}    
       is_build_disabled: ${{ steps.is_build_disabled.outputs.is_build_disabled }}
@@ -81,7 +81,7 @@ jobs:
 
   build-and-publish:
     name: build + push docker image
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     needs:
       - workflow-check
       - test
@@ -102,7 +102,7 @@ jobs:
         run: docker login -u ${{ secrets.DOCKER_LOGIN }} -p ${{ secrets.DOCKER_PASSWORD }}
       - name: poetry install
         run: |
-          curl -sSL https://install.python-poetry.org | python - --version=1.2.2
+          curl -sSL https://install.python-poetry.org | python -
           echo "$HOME/.poetry/bin" >> $GITHUB_PATH
           poetry --version
       - name: docker build
@@ -119,7 +119,7 @@ jobs:
         run: docker push --all-tags mentorpal/sbert-service
 
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     needs:
       - build-and-publish
       - workflow-check
