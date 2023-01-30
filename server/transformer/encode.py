@@ -97,7 +97,7 @@ class TransformersEncoder:
         top_k += 1  # A sentence has the highest similarity to itself. Increase +1 as we are interest in distinct pairs
 
         # Mine for duplicates
-        pairs = queue.PriorityQueue()
+        pairs: queue.PriorityQueue = queue.PriorityQueue()
         min_score = -1
         num_added = 0
 

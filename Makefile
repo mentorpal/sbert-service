@@ -8,7 +8,7 @@ $(VENV):
 .PHONY: install
 install: poetry-ensure-installed
 	poetry config --local virtualenvs.in-project true
-	poetry env use python3.8
+	poetry env use python3.10
 	poetry install
 
 .PHONY docker-build:
@@ -77,7 +77,7 @@ poetry-ensure-installed:
 .PHONY: test
 test: $(VENV)
 	cd ./shared/ && $(MAKE) installed/sentence-transformer
-	SHARED_ROOT=./shared/installed poetry run python -m py.test -vv
+	SHARED_ROOT=./shared/installed poetry run python -m pytest -vv
 
 .PHONY: black
 black: $(VENV)
