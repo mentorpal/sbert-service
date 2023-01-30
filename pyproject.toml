@@ -5,7 +5,7 @@ description = "SBert as a service"
 authors = ["Milan Simonovic <mbsimonovic@gmail.com>"]
 
 [tool.poetry.dependencies]
-python = "^3.8.4"
+python = "^3.10"
 gunicorn = "^20.1.0"
 Flask = "^2.0.3"
 Flask-Cors = "^3.0.10"

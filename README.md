@@ -33,7 +33,7 @@ A dockerized REST API service to encode sentences using [sentence-transformers](
 ## Requirements
 
 - [recommended] [conda](https://www.anaconda.com/) to simplify python version management. 
-- python3.8 (must be in path as `python3.8` to build virtualenv)
+-  python3.10(must be in path as `python3.10` to build virtualenv)
 - make
 - [poetry](https://python-poetry.org/docs/) for dependency management
 
