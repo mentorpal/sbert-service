@@ -79,6 +79,10 @@ test: $(VENV) install
 	cd ./shared/ && $(MAKE) installed/sentence-transformer
 	SHARED_ROOT=./shared/installed poetry run python -m pytest -vv
 
+.PHONY: unit-tests
+unit-tests: $(VENV) install
+	SHARED_ROOT=./shared/installed poetry run python -m pytest -vv
+
 .PHONY: black
 black: $(VENV)
 	poetry run black .
