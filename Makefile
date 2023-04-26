@@ -10,6 +10,7 @@ install: poetry-ensure-installed
 	poetry config --local virtualenvs.in-project true
 	poetry env use python3.10
 	poetry install
+	make word2vec.bin
 
 .PHONY docker-build:
 docker-build: sentence-transformers transformer.pkl
