@@ -30,7 +30,7 @@ jobs:
       - name: test licenses
         run: make test-license
       - name: run unit tests
-        run: make unit-tests
+        run: make test
 
   workflow-check:
     name: workflow check
