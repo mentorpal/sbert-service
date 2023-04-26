@@ -29,6 +29,8 @@ jobs:
         run: make test-lint
       - name: test licenses
         run: make test-license
+      - name: run unit tests
+        run: make test
 
   workflow-check:
     name: workflow check
