@@ -39,6 +39,8 @@ module "subnets" {
   nat_instance_enabled = false
   private_route_table_enabled = true
   private_dns64_nat64_enabled = false
+  private_assign_ipv6_address_on_creation = true
+  public_assign_ipv6_address_on_creation = true
   ipv4_cidr_block      = [module.vpc.vpc_cidr_block]
   ipv6_enabled = true
   ipv6_cidr_block      = [module.vpc.vpc_ipv6_cidr_block]
