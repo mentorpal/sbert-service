@@ -10,7 +10,7 @@ install: poetry-ensure-installed
 	poetry config --local virtualenvs.in-project true
 	poetry env use python3.10
 	poetry install
-
+	
 .PHONY docker-build:
 docker-build: sentence-transformers transformer.pkl word2vec.bin
 # squash reduces final image size by merging layers `--squash`
@@ -79,7 +79,7 @@ poetry-ensure-installed:
 	./tools/poetry_ensure_installed.sh
 
 .PHONY: test
-test: $(VENV)
+test: $(VENV) install poetry-ensure-installed sentence-transformers transformer.pkl
 	cd ./shared/ && $(MAKE) installed/sentence-transformer
 	SHARED_ROOT=./shared/installed poetry run python -m pytest -vv
 
