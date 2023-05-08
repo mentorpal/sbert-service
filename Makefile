@@ -79,7 +79,7 @@ poetry-ensure-installed:
 	./tools/poetry_ensure_installed.sh
 
 .PHONY: test
-test: $(VENV) install poetry-ensure-installed sentence-transformers transformer.pkl
+test: $(VENV) install poetry-ensure-installed sentence-transformers transformer.pkl word2vec.bin
 	cd ./shared/ && $(MAKE) installed/sentence-transformer
 	SHARED_ROOT=./shared/installed poetry run python -m pytest -vv
 
