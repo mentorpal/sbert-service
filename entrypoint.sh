@@ -7,6 +7,6 @@
 ##
 export FLASK_APP=/app/server
 
-cd /app && gunicorn --config python:server.gunicorn_conf server.manage:app
+cd /app && gunicorn --config python:server.gunicorn_conf server.manage:app --timeout 120
 
 exit 0
