@@ -245,7 +245,7 @@ variable "eb_env_rolling_update_type" {
 variable "eb_env_root_volume_size" {
   type        = number
   description = "The size of the EBS root volume"
-  default     = 8
+  default     = 16
 }
 
 variable "eb_env_root_volume_type" {

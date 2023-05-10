@@ -37,7 +37,7 @@ inputs = {
   eb_env_namespace           = "mentorpal"
   eb_env_stage               = local.env
   eb_env_name                = "sbert"
-  eb_env_instance_type       = "c6i.large" # compute-optimized, 60$/month, similar to t3.large
+  eb_env_instance_type       = "c6i.xlarge" # compute-optimized, 120$/month
   enable_alarms              = true
   slack_channel              = "ls-alerts-qa"
   slack_username             = "uscictlsalerts"
@@ -47,8 +47,8 @@ inputs = {
   allowed_origin             = local.allowed_origin
 
   # scaling:
-  eb_env_autoscale_min = 1 # ~23req/sec with c6i.large
-  eb_env_autoscale_max = 1 # ~50req/sec with c6i.large
+  eb_env_autoscale_min = 1 # 
+  eb_env_autoscale_max = 1 # 
   # seems like there's no way to set desired capacity and it seems to be max by default?
   eb_env_autoscale_measure_name    = "CPUUtilization"
   eb_env_autoscale_statistic       = "Average"
