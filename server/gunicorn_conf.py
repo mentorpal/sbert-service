@@ -11,8 +11,7 @@
 import multiprocessing
 
 # https://docs.gunicorn.org/en/stable/settings.html#workers
-workers = int(multiprocessing.cpu_count() / 2) + 1
-threads = int(multiprocessing.cpu_count() / 2) + 1
+workers = 1
 
 # limit max clients at the time to prevent overload:
 worker_connections = 150
