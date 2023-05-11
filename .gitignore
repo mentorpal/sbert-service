@@ -19,3 +19,6 @@ build
 dist
 htmlcov
 shared/installed/*
+transformer.pkl
+*_saved_keyed_vectors
+*.vectors.npy
