@@ -53,6 +53,8 @@ class TransformersEncoder:
         self.transformer = TransformersEncoder.transformer
 
     def encode(self, question: str) -> Union[List[Tensor], ndarray, Tensor]:
+        if getattr(TransformersEncoder, "transformer", None) is None:
+            self.load_encoder_transformer()
         logging.info(question)
         embedded_question = self.transformer.get_embeddings(question)
         return embedded_question.tolist()
