@@ -37,7 +37,7 @@ def cos_sim(a: Tensor, b: Tensor):
 
 
 class TransformersEncoder:
-    transformer: TransformerEmbeddings = None  # shared
+    transformer: TransformerEmbeddings  # shared
     shared_root = ""
 
     def __init__(self, shared_root: str):
