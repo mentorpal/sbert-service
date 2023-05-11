@@ -9,6 +9,7 @@ from typing import Dict, List
 from gensim.models import KeyedVectors
 from gensim.models.keyedvectors import Word2VecKeyedVectors
 from numpy import ndarray
+from datetime import datetime
 
 WORD2VEC_MODELS: Dict[str, Word2VecKeyedVectors] = {}
 
@@ -17,11 +18,13 @@ WORD2VEC_SLIM_MODEL_NAME = "word2vec_slim"
 
 
 def find_or_load_word2vec(file_path: str) -> Word2VecKeyedVectors:
+    print(f"{datetime.now()} loading {file_path}", flush=True)
     abs_path = path.abspath(file_path)
     if abs_path not in WORD2VEC_MODELS:
         WORD2VEC_MODELS[abs_path] = KeyedVectors.load_word2vec_format(
             abs_path, binary=True
         )
+
     return WORD2VEC_MODELS[abs_path]
 
 
@@ -34,12 +37,17 @@ class Word2VecTransformer:
     w2v_slim_model: Word2VecKeyedVectors
 
     def __init__(self, shared_root: str):
+        print(f"{datetime.now()} before word2vec.bin", flush=True)
         self.w2v_model = find_or_load_word2vec(
             path.abspath(path.join(shared_root, "word2vec.bin"))
         )
+        print(f"{datetime.now()} after word2vec.bin", flush=True)
+        print(f"{datetime.now()} before word2vec_slim.bin", flush=True)
+
         self.w2v_slim_model = find_or_load_word2vec(
             path.abspath(path.join(shared_root, "word2vec_slim.bin"))
         )
+        print(f"{datetime.now()} after word2vec_slim.bin", flush=True)
 
     def get_feature_vectors(self, words: List[str], model: str) -> Dict[str, ndarray]:
         result: Dict[str, ndarray] = dict()

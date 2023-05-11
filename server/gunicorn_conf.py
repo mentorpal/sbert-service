@@ -4,14 +4,13 @@
 #
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
-import multiprocessing
 
 # Gunicorn configuration file
 # https://docs.gunicorn.org/en/stable/configure.html#configuration-file
 # https://docs.gunicorn.org/en/stable/settings.html
 
 # https://docs.gunicorn.org/en/stable/settings.html#workers
-workers = int(multiprocessing.cpu_count() / 2)
+workers = 2
 
 # limit max clients at the time to prevent overload:
 worker_connections = 150
