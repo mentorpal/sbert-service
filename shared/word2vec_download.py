@@ -10,17 +10,37 @@ from zipfile import ZipFile
 
 from utils import download
 
+from datetime import datetime
+from gensim.models import KeyedVectors
+
+from gensim.models.keyedvectors import Word2VecKeyedVectors
+
+
+def load_and_save_word2vec_keyed_vectors(wor2vec_vectors_path: str, path_to_file: str):
+    print(f"{datetime.now()} loading {path_to_file}", flush=True)
+    abs_path = os.path.abspath(path_to_file)
+    model_keyed_vectors: Word2VecKeyedVectors = KeyedVectors.load_word2vec_format(
+        abs_path, binary=True
+    )
+    model_keyed_vectors.save(wor2vec_vectors_path)
+
 
 def word2vec_download(to_path="installed", replace_existing=False) -> str:
     word2vec_path = os.path.abspath(os.path.join(to_path, "word2vec.bin"))
-    if os.path.isfile(word2vec_path) and not replace_existing:
-        print(f"already is a file! {word2vec_path}")
+    wor2vec_vectors_path = os.path.abspath(
+        os.path.join(to_path, "word_2_vec_saved_keyed_vectors")
+    )
+    if os.path.isfile(wor2vec_vectors_path) and not replace_existing:
+        print(f"already are files!{wor2vec_vectors_path}")
         return word2vec_path
     word2vec_zip = os.path.join(to_path, "word2vec.zip")
     download("http://vectors.nlpl.eu/repository/20/6.zip", word2vec_zip)
     with ZipFile(word2vec_zip, "r") as z:
         z.extract("model.bin")
-    shutil.move("model.bin", word2vec_path)
+
+    load_and_save_word2vec_keyed_vectors(wor2vec_vectors_path, "model.bin")
+
+    os.remove("model.bin")
     os.remove(word2vec_zip)
     return word2vec_path
 
