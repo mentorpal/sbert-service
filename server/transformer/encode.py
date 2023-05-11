@@ -37,18 +37,20 @@ def cos_sim(a: Tensor, b: Tensor):
 
 
 class TransformersEncoder:
-    transformer: TransformerEmbeddings  # shared
+    transformer: TransformerEmbeddings = None  # shared
+    shared_root = ""
 
     def __init__(self, shared_root: str):
-        self.transformer = self.__load_transformer(shared_root)
+        self.shared_root = shared_root
 
-    def __load_transformer(self, shared_root):
+    def load_encoder_transformer(self):
+        logging.info("loading transformer")
         if getattr(TransformersEncoder, "transformer", None) is None:
             # class variable, load just once
-            logging.info(f"loading transformers from {shared_root}")
-            transformer = load_transformer(shared_root)
+            logging.info(f"loading transformers from {self.shared_root}")
+            transformer = load_transformer(self.shared_root)
             setattr(TransformersEncoder, "transformer", transformer)
-        return TransformersEncoder.transformer
+        self.transformer = TransformersEncoder.transformer
 
     def encode(self, question: str) -> Union[List[Tensor], ndarray, Tensor]:
         logging.info(question)
