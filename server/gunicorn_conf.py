@@ -11,6 +11,8 @@
 
 # https://docs.gunicorn.org/en/stable/settings.html#workers
 # import multiprocessing
+import logging
+from server.api.blueprints import encoder
 
 workers = 5
 
@@ -24,3 +26,11 @@ bind = "0.0.0.0:5000"
 # to prevent any memory leaks:
 max_requests = 1000
 max_requests_jitter = 50
+
+
+def post_worker_init(worker):
+    """
+    gunicorn preload fudges the transformer, so we load the transfomer on startup for each worker
+    """
+    logging.info(f"post worker init: {worker.pid}")
+    encoder.load_encoder_transformer()

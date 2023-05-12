@@ -6,27 +6,12 @@
 #
 import os
 from server.transformer.word2vec_transformer import Word2VecTransformer
-from typing import Dict
 from server.transformer.encode import TransformersEncoder
-import logging
-
-encoder_holder: Dict[str, TransformersEncoder] = {}
-
-
-def find_or_load_encoder():
-    logging.info(encoder_holder)
-    if "encoder" not in encoder_holder:
-        logging.info("encoder not in holder, loading in")
-        encoder = TransformersEncoder(shared_root)
-        encoder_holder["encoder"] = encoder
-        return encoder
-    logging.info("encoder found")
-    return encoder_holder["encoder"]
-
 
 shared_root = os.environ.get("SHARED_ROOT", "shared")
 if not os.path.isdir(shared_root):
     raise Exception("Shared missing.")
 
 # load on init so request handler is fast on first hit
+encoder: TransformersEncoder = TransformersEncoder(shared_root)
 w2v_transformer: Word2VecTransformer = Word2VecTransformer(shared_root)

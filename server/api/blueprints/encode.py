@@ -8,7 +8,7 @@ import os
 import logging
 from flask import Blueprint, jsonify, request
 from .auth_decorator import authenticate
-from . import find_or_load_encoder
+from . import encoder
 
 
 encode_blueprint = Blueprint("encode", __name__)
@@ -22,7 +22,6 @@ def encode():
     if "query" not in request.args:
         return (jsonify({"query": ["required field"]}), 400)
     sentence = request.args["query"].strip()
-    encoder = find_or_load_encoder()
     result = encoder.encode(sentence)
     return (
         jsonify(
@@ -44,7 +43,6 @@ def multiple_encode():
     logging.info(request.data)
     if "sentences" not in request.json:
         return (jsonify({"sentences": ["required field"]}), 400)
-    encoder = find_or_load_encoder()
     sentences = request.json["sentences"]
     result = list(
         map(
@@ -80,7 +78,6 @@ def cos_sim_weight():
 
     if "a" not in request.json or "b" not in request.json:
         return (jsonify({"a and b sentences": ["required field"]}), 400)
-    encoder = find_or_load_encoder()
 
     result = encoder.cos_sim_weight(request.json["a"], request.json["b"])
     return (

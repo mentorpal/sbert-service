@@ -7,7 +7,8 @@
 import http from "k6/http";
 import { SharedArray } from "k6/data";
 import { check } from "k6";
-
+// "http://0.0.0.0:5000/v1/encode"
+// "https://sbert-dev.mentorpal.org/v1/encode"
 const apiUrl = "https://sbert-dev.mentorpal.org/v1/encode";
 const questions = new SharedArray("user questions", function () {
   // subset of https://gist.github.com/khamer/66102c745a9a75de997c038e3166a95d
