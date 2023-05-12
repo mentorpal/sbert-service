@@ -19,9 +19,12 @@ shared_root = os.environ.get("SHARED_ROOT", "shared")
 @encode_blueprint.route("", methods=["GET", "POST"])
 @authenticate
 def encode():
-    if "query" not in request.args:
+    if request.get_json(silent=True) is not None and "query" in request.json:
+        sentence = request.json["query"].strip()
+    elif "query" in request.args:
+        sentence = request.args["query"].strip()
+    else:
         return (jsonify({"query": ["required field"]}), 400)
-    sentence = request.args["query"].strip()
     result = encoder.encode(sentence)
     return (
         jsonify(

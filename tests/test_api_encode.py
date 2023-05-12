@@ -15,9 +15,20 @@ def test_returns_400_response_when_query_missing(client):
     assert res.status_code == 400
 
 
-def test_hello_world(client):
+def test_hello_world_query_param(client):
     res = client.get(
         "/v1/encode?query=hello+world", headers={"Authorization": "bearer dummykey"}
+    )
+    assert res.status_code == 200
+    assert res.json["query"] == "hello world"
+    assert len(res.json["encoding"]) > 20
+
+
+def test_hello_world_json_body(client):
+    res = client.get(
+        "/v1/encode",
+        json={"query": "hello world"},
+        headers={"Authorization": "bearer dummykey"},
     )
     assert res.status_code == 200
     assert res.json["query"] == "hello world"
