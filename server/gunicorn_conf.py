@@ -33,5 +33,5 @@ def post_worker_init(worker):
     gunicorn preload fudges the transformer, so we load the transfomer on startup for each worker
     """
     logging.info("post worker init")
-    print(f"worker pid: {worker.pid}")
+    logging.info(f"worker pid: {worker.pid}")
     encoder.load_encoder_transformer()
