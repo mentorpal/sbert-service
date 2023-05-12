@@ -7,6 +7,6 @@
 ##
 export FLASK_APP=/app/server
 
-cd /app && gunicorn --config python:server.gunicorn_conf server.manage:app --timeout 300 --preload --log-level debug
+cd /app && gunicorn --config python:server.gunicorn_conf server.manage:app --timeout 300 --log-level debug
 
 exit 0

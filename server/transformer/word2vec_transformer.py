@@ -34,17 +34,18 @@ class Word2VecTransformer:
     w2v_slim_model: Word2VecKeyedVectors
 
     def __init__(self, shared_root: str):
-        print(f"{datetime.now()} before word2vec.bin", flush=True)
-        self.w2v_model = find_or_load_word2vec(
-            path.abspath(path.join(shared_root, "word_2_vec_saved_keyed_vectors"))
-        )
-        print(f"{datetime.now()} after word2vec.bin", flush=True)
-        print(f"{datetime.now()} before word2vec_slim.bin", flush=True)
+        pass
+        # print(f"{datetime.now()} before word2vec.bin", flush=True)
+        # self.w2v_model = find_or_load_word2vec(
+        #     path.abspath(path.join(shared_root, "word_2_vec_saved_keyed_vectors"))
+        # )
+        # print(f"{datetime.now()} after word2vec.bin", flush=True)
+        # print(f"{datetime.now()} before word2vec_slim.bin", flush=True)
 
-        self.w2v_slim_model = find_or_load_word2vec(
-            path.abspath(path.join(shared_root, "word_2_vec_slim_saved_keyed_vectors"))
-        )
-        print(f"{datetime.now()} after word2vec_slim.bin", flush=True)
+        # self.w2v_slim_model = find_or_load_word2vec(
+        #     path.abspath(path.join(shared_root, "word_2_vec_slim_saved_keyed_vectors"))
+        # )
+        # print(f"{datetime.now()} after word2vec_slim.bin", flush=True)
 
     def get_feature_vectors(self, words: List[str], model: str) -> Dict[str, ndarray]:
         result: Dict[str, ndarray] = dict()
