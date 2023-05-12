@@ -4,12 +4,15 @@
 #
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
+import os
 import logging
 from flask import Blueprint, jsonify, request
-from . import encoder
 from .auth_decorator import authenticate
+from . import find_or_load_encoder
+
 
 encode_blueprint = Blueprint("encode", __name__)
+shared_root = os.environ.get("SHARED_ROOT", "shared")
 
 
 @encode_blueprint.route("/", methods=["GET", "POST"])
@@ -19,6 +22,7 @@ def encode():
     if "query" not in request.args:
         return (jsonify({"query": ["required field"]}), 400)
     sentence = request.args["query"].strip()
+    encoder = find_or_load_encoder()
     result = encoder.encode(sentence)
     return (
         jsonify(
@@ -40,7 +44,7 @@ def multiple_encode():
     logging.info(request.data)
     if "sentences" not in request.json:
         return (jsonify({"sentences": ["required field"]}), 400)
-
+    encoder = find_or_load_encoder()
     sentences = request.json["sentences"]
     result = list(
         map(

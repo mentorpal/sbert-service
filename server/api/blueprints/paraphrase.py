@@ -6,7 +6,7 @@
 #
 from flask import Blueprint, jsonify, request
 from .auth_decorator import authenticate
-from . import encoder
+from .encode import find_or_load_encoder
 import logging
 
 paraphrase_blueprint = Blueprint("paraphrase_mining", __name__)
@@ -22,6 +22,7 @@ def paraphrase():
         return (jsonify({"sentences": ["required field"]}), 400)
 
     sentences = request.json["sentences"]
+    encoder = find_or_load_encoder()
     result = encoder.paraphrase_mining(sentences)
     logging.info("input length: %s, results: %s", len(sentences), len(result))
 
