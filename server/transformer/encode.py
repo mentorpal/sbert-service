@@ -46,7 +46,7 @@ class TransformersEncoder:
 
     def load_encoder_transformer(self):
         logging.info("loading transformer")
-        if getattr(TransformersEncoder, "transformer", None) is None:
+        if self.transformer_loaded is False:
             # class variable, load just once
             logging.info(f"loading transformers from {self.shared_root}")
             transformer = load_transformer(self.shared_root)

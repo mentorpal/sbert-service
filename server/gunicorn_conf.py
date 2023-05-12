@@ -12,6 +12,7 @@
 # https://docs.gunicorn.org/en/stable/settings.html#workers
 import multiprocessing
 from server.api.blueprints import encoder
+import logging
 
 workers = int(multiprocessing.cpu_count() * 2) + 1
 
@@ -31,4 +32,6 @@ def post_worker_init(worker):
     """
     gunicorn preload fudges the transformer, so we load the transfomer on startup for each worker
     """
+    logging.info("post worker init")
+    print(f"worker pid: {worker.pid}")
     encoder.load_encoder_transformer()
