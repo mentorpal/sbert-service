@@ -80,6 +80,8 @@ def cos_sim_weight():
 
     if "a" not in request.json or "b" not in request.json:
         return (jsonify({"a and b sentences": ["required field"]}), 400)
+    encoder = find_or_load_encoder()
+
     result = encoder.cos_sim_weight(request.json["a"], request.json["b"])
     return (
         jsonify(
