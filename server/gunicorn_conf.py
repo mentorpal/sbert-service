@@ -10,11 +10,12 @@
 # https://docs.gunicorn.org/en/stable/settings.html
 
 # https://docs.gunicorn.org/en/stable/settings.html#workers
-# import multiprocessing
+import multiprocessing
 import logging
 from server.api.blueprints import encoder
 
-workers = 5
+workers = 3
+threads = multiprocessing.cpu_count() * 2
 
 # limit max clients at the time to prevent overload:
 worker_connections = 150
