@@ -12,7 +12,7 @@
 # https://docs.gunicorn.org/en/stable/settings.html#workers
 # import multiprocessing
 
-workers = 3
+workers = 4
 
 # limit max clients at the time to prevent overload:
 worker_connections = 150
