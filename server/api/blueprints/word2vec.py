@@ -24,9 +24,9 @@ def encode():
         return (jsonify({"words": ["required field"]}), 400)
 
     if request.get_json(silent=True) is not None and "model" in request.json:
-        model = request.json["model"].strip().split(" ")
-    elif "words" in request.args:
-        model = request.args["model"].strip().split(" ")
+        model = request.json["model"].strip()
+    elif "model" in request.args:
+        model = request.args["model"].strip()
     else:
         return (jsonify({"model": ["required field"]}), 400)
     result = w2v_transformer.get_feature_vectors(words, model)
