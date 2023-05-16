@@ -43,7 +43,6 @@ def encode():
 def multiple_encode():
     if not request.content_type.lower().startswith("application/json"):
         return (jsonify({"error": ["invalid content type, only json accepted"]}), 400)
-    logging.info(request.data)
     if "sentences" not in request.json:
         return (jsonify({"sentences": ["required field"]}), 400)
     sentences = request.json["sentences"]
@@ -77,7 +76,6 @@ def cos_sim_weight():
     """
     if not request.content_type.lower().startswith("application/json"):
         return (jsonify({"error": ["invalid content type, only json accepted"]}), 400)
-    logging.info(request.data)
 
     if "a" not in request.json or "b" not in request.json:
         return (jsonify({"a and b sentences": ["required field"]}), 400)

@@ -16,12 +16,19 @@ w2v_blueprint = Blueprint("w2v", __name__)
 @w2v_blueprint.route("", methods=["GET", "POST"])
 @authenticate
 def encode():
-    if "words" not in request.args:
+    if request.get_json(silent=True) is not None and "words" in request.json:
+        words = request.json["words"].strip().split(" ")
+    elif "words" in request.args:
+        words = request.args["words"].strip().split(" ")
+    else:
         return (jsonify({"words": ["required field"]}), 400)
-    if "model" not in request.args:
+
+    if request.get_json(silent=True) is not None and "model" in request.json:
+        model = request.json["model"].strip().split(" ")
+    elif "words" in request.args:
+        model = request.args["model"].strip().split(" ")
+    else:
         return (jsonify({"model": ["required field"]}), 400)
-    words = request.args["words"].strip().split(" ")
-    model = request.args["model"].strip()
     result = w2v_transformer.get_feature_vectors(words, model)
     return (jsonify(result), 200)
 

@@ -22,9 +22,22 @@ def test_returns_400_response_when_query_missing(client):
     "model",
     [("word2vec"), ("word2vec_slim")],
 )
-def test_hello_world(model: str, client):
+def test_hello_world_query_param(model: str, client):
     res = client.post(
         f"/v1/w2v?words=hello+world&model={model}",
+        headers={"Authorization": "bearer dummykey"},
+    )
+    assert res.status_code == 200
+
+
+@pytest.mark.parametrize(
+    "model",
+    [("word2vec"), ("word2vec_slim")],
+)
+def test_hello_world_json_body(model: str, client):
+    res = client.post(
+        "/v1/w2v",
+        json={"words": "hello world", "model": model},
         headers={"Authorization": "bearer dummykey"},
     )
     assert res.status_code == 200
