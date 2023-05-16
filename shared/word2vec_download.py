@@ -17,7 +17,6 @@ from gensim.models.keyedvectors import Word2VecKeyedVectors
 
 
 def load_and_save_word2vec_keyed_vectors(wor2vec_vectors_path: str, path_to_file: str):
-    print(f"{datetime.now()} loading {path_to_file}", flush=True)
     abs_path = os.path.abspath(path_to_file)
     model_keyed_vectors: Word2VecKeyedVectors = KeyedVectors.load_word2vec_format(
         abs_path, binary=True
