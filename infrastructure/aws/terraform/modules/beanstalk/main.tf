@@ -111,7 +111,7 @@ module "elastic_beanstalk_environment" {
 
   vpc_id               = module.vpc.vpc_id
   loadbalancer_subnets = module.subnets.public_subnet_ids
-  application_subnets  = module.subnets.private_subnet_ids
+  application_subnets  = module.subnets.public_subnet_ids
   allowed_security_groups = [
     module.vpc.vpc_default_security_group_id
   ]
