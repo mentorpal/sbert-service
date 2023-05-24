@@ -93,6 +93,8 @@ module "elastic_beanstalk_environment" {
   health_streaming_delete_on_terminate = var.eb_env_health_streaming_delete_on_terminate
   health_streaming_retention_in_days   = var.eb_env_health_streaming_retention_in_days
 
+  associate_public_ip_address = true
+
   instance_type    = var.eb_env_instance_type
   root_volume_size = var.eb_env_root_volume_size
   root_volume_type = var.eb_env_root_volume_type
