@@ -41,6 +41,11 @@ variable "eb_env_additional_settings" {
       namespace = "aws:elasticbeanstalk:managedactions"
       name      = "ManagedActionsEnabled"
       value     = "false"
+    },
+    {
+      namespace = "aws:elb:loadbalancer"
+      name      = "SetIpAddressType"
+      value     = "Dualstack"
     }
   ]
 }
