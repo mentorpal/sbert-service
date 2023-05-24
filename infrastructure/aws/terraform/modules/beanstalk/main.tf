@@ -12,7 +12,7 @@ locals {
 }
 
 module "vpc" {
-  source     = "git::https://github.com/cloudposse/terraform-aws-vpc.git?ref=tags/0.25.0"
+  source     = "git::https://github.com/cloudposse/terraform-aws-vpc.git?ref=tags/1.2.0"
   namespace  = var.eb_env_namespace
   stage      = var.eb_env_stage
   name       = var.eb_env_name
@@ -20,10 +20,12 @@ module "vpc" {
   tags       = var.eb_env_tags
   delimiter  = var.eb_env_delimiter
   cidr_block = var.vpc_cidr_block
+  internet_gateway_enabled = true
+  ipv6_egress_only_internet_gateway_enabled = true
 }
 
 module "subnets" {
-  source               = "git::https://github.com/cloudposse/terraform-aws-dynamic-subnets.git?ref=tags/0.39.3"
+  source               = "git::https://github.com/cloudposse/terraform-aws-dynamic-subnets.git?ref=tags/2.1.0"
   availability_zones   = var.aws_availability_zones
   namespace            = var.eb_env_namespace
   stage                = var.eb_env_stage
@@ -32,10 +34,17 @@ module "subnets" {
   tags                 = var.eb_env_tags
   delimiter            = var.eb_env_delimiter
   vpc_id               = module.vpc.vpc_id
-  igw_id               = module.vpc.igw_id
-  cidr_block           = module.vpc.vpc_cidr_block
-  nat_gateway_enabled  = true
+  igw_id               = [module.vpc.igw_id]
+  nat_gateway_enabled  = false
   nat_instance_enabled = false
+  private_route_table_enabled = true
+  private_dns64_nat64_enabled = false
+  private_assign_ipv6_address_on_creation = true
+  public_assign_ipv6_address_on_creation = true
+  ipv4_cidr_block      = [module.vpc.vpc_cidr_block]
+  ipv6_enabled = true
+  ipv6_cidr_block      = [module.vpc.vpc_ipv6_cidr_block]
+  ipv6_egress_only_igw_id = [module.vpc.ipv6_egress_only_igw_id]
 }
 
 module "elastic_beanstalk_application" {
@@ -51,6 +60,8 @@ module "elastic_beanstalk_application" {
 
 
 ###
+# IMPORTANT NOTE: After deployment, you must manually change the IP address type of the load balancer to dualstack.
+#                 This is a new feature that is not yet supported in terraform.
 # the main elastic beanstalk env
 ###
 module "elastic_beanstalk_environment" {
@@ -84,6 +95,8 @@ module "elastic_beanstalk_environment" {
   health_streaming_delete_on_terminate = var.eb_env_health_streaming_delete_on_terminate
   health_streaming_retention_in_days   = var.eb_env_health_streaming_retention_in_days
 
+  associate_public_ip_address = true
+
   instance_type    = var.eb_env_instance_type
   root_volume_size = var.eb_env_root_volume_size
   root_volume_type = var.eb_env_root_volume_type
@@ -100,7 +113,7 @@ module "elastic_beanstalk_environment" {
 
   vpc_id               = module.vpc.vpc_id
   loadbalancer_subnets = module.subnets.public_subnet_ids
-  application_subnets  = module.subnets.private_subnet_ids
+  application_subnets  = module.subnets.public_subnet_ids
   allowed_security_groups = [
     module.vpc.vpc_default_security_group_id
   ]
