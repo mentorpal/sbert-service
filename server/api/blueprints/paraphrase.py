@@ -6,7 +6,7 @@
 #
 from flask import Blueprint, jsonify, request
 from .auth_decorator import authenticate
-from . import encoder
+from .encode import encoder
 import logging
 
 paraphrase_blueprint = Blueprint("paraphrase_mining", __name__)

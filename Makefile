@@ -12,7 +12,7 @@ install: poetry-ensure-installed
 	poetry install
 	
 .PHONY docker-build:
-docker-build: sentence-transformers transformer.pkl
+docker-build: sentence-transformers transformer.pkl word2vec.bin
 # squash reduces final image size by merging layers `--squash`
 # but its not supported in github actions
 	docker build -t $(DOCKER_IMAGE) .
@@ -26,6 +26,10 @@ sentence-transformers: shared/installed
 
 transformer.pkl: $(VENV) shared/installed sentence-transformers
 	poetry run python ./server/transformer/embeddings.py ./shared/installed
+
+word2vec.bin: shared/installed
+	cd shared && poetry run python word2vec_download.py
+	cd shared && poetry run python word2vec_slim_download.py
 
 build/deploy:
 	# put everything we want in our beanstalk deploy.zip file
@@ -75,7 +79,7 @@ poetry-ensure-installed:
 	./tools/poetry_ensure_installed.sh
 
 .PHONY: test
-test: $(VENV) install poetry-ensure-installed sentence-transformers transformer.pkl
+test: $(VENV) install poetry-ensure-installed sentence-transformers transformer.pkl word2vec.bin
 	cd ./shared/ && $(MAKE) installed/sentence-transformer
 	SHARED_ROOT=./shared/installed poetry run python -m pytest -vv
 

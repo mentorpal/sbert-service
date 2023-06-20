@@ -60,6 +60,8 @@ module "elastic_beanstalk_application" {
 
 
 ###
+# IMPORTANT NOTE: After deployment, you must manually change the IP address type of the load balancer to dualstack.
+#                 This is a new feature that is not yet supported in terraform.
 # the main elastic beanstalk env
 ###
 module "elastic_beanstalk_environment" {

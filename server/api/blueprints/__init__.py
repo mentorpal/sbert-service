@@ -5,8 +5,8 @@
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
 import os
+from server.transformer.word2vec_transformer import Word2VecTransformer
 from server.transformer.encode import TransformersEncoder
-
 
 shared_root = os.environ.get("SHARED_ROOT", "shared")
 if not os.path.isdir(shared_root):
@@ -14,3 +14,4 @@ if not os.path.isdir(shared_root):
 
 # load on init so request handler is fast on first hit
 encoder: TransformersEncoder = TransformersEncoder(shared_root)
+w2v_transformer: Word2VecTransformer = Word2VecTransformer(shared_root)

@@ -10,40 +10,46 @@
 #     monkeypatch.setenv("SHARED_ROOT", shared_root)
 
 
+import pytest
+
+
 def test_returns_400_response_when_query_missing(client):
-    res = client.get("/v1/encode/", headers={"Authorization": "bearer dummykey"})
+    res = client.post("/v1/w2v/", headers={"Authorization": "bearer dummykey"})
     assert res.status_code == 400
 
 
-def test_hello_world_query_param(client):
-    res = client.get(
-        "/v1/encode?query=hello+world", headers={"Authorization": "bearer dummykey"}
-    )
-    assert res.status_code == 200
-    assert res.json["query"] == "hello world"
-    assert len(res.json["encoding"]) > 20
-
-
-def test_hello_world_json_body(client):
-    res = client.get(
-        "/v1/encode",
-        json={"query": "hello world"},
+@pytest.mark.parametrize(
+    "model",
+    [("word2vec"), ("word2vec_slim")],
+)
+def test_hello_world_query_param(model: str, client):
+    res = client.post(
+        f"/v1/w2v?words=hello+world&model={model}",
         headers={"Authorization": "bearer dummykey"},
     )
     assert res.status_code == 200
-    assert res.json["query"] == "hello world"
-    assert len(res.json["encoding"]) > 20
 
 
-def test_multiple_encode(client):
-    res = client.get(
-        "/v1/encode/multiple_encode/",
-        json={"sentences": ["hello", "world"]},
+@pytest.mark.parametrize(
+    "model",
+    [("word2vec"), ("word2vec_slim")],
+)
+def test_hello_world_json_body(model: str, client):
+    res = client.post(
+        "/v1/w2v",
+        json={"words": "hello world", "model": model},
         headers={"Authorization": "bearer dummykey"},
     )
     assert res.status_code == 200
-    results = res.json["data"]
-    assert len(results[0]["encoded"]) > 20
-    assert results[0]["original"] == "hello"
-    assert len(results[1]["encoded"]) > 20
-    assert results[1]["original"] == "world"
+
+
+@pytest.mark.parametrize(
+    "model",
+    [("word2vec"), ("word2vec_slim")],
+)
+def test_index_to_key(model: str, client):
+    res = client.post(
+        f"/v1/w2v/index_to_key?model={model}",
+        headers={"Authorization": "bearer dummykey"},
+    )
+    assert res.status_code == 200

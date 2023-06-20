@@ -19,3 +19,7 @@ build
 dist
 htmlcov
 shared/installed/*
+shared/sentence-transformer
+transformer.pkl
+*_saved_keyed_vectors
+*.vectors.npy

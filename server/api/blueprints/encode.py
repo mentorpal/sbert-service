@@ -4,21 +4,27 @@
 #
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
+import os
 import logging
 from flask import Blueprint, jsonify, request
-from . import encoder
 from .auth_decorator import authenticate
+from . import encoder
+
 
 encode_blueprint = Blueprint("encode", __name__)
+shared_root = os.environ.get("SHARED_ROOT", "shared")
 
 
 @encode_blueprint.route("/", methods=["GET", "POST"])
 @encode_blueprint.route("", methods=["GET", "POST"])
 @authenticate
 def encode():
-    if "query" not in request.args:
+    if request.get_json(silent=True) is not None and "query" in request.json:
+        sentence = request.json["query"].strip()
+    elif "query" in request.args:
+        sentence = request.args["query"].strip()
+    else:
         return (jsonify({"query": ["required field"]}), 400)
-    sentence = request.args["query"].strip()
     result = encoder.encode(sentence)
     return (
         jsonify(
@@ -37,10 +43,8 @@ def encode():
 def multiple_encode():
     if not request.content_type.lower().startswith("application/json"):
         return (jsonify({"error": ["invalid content type, only json accepted"]}), 400)
-    logging.info(request.data)
     if "sentences" not in request.json:
         return (jsonify({"sentences": ["required field"]}), 400)
-
     sentences = request.json["sentences"]
     result = list(
         map(
@@ -72,10 +76,10 @@ def cos_sim_weight():
     """
     if not request.content_type.lower().startswith("application/json"):
         return (jsonify({"error": ["invalid content type, only json accepted"]}), 400)
-    logging.info(request.data)
 
     if "a" not in request.json or "b" not in request.json:
         return (jsonify({"a and b sentences": ["required field"]}), 400)
+
     result = encoder.cos_sim_weight(request.json["a"], request.json["b"])
     return (
         jsonify(
